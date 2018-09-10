@@ -1,3 +1,3 @@
- * Go to knowledge -> Documents
- * Create a Incoming fatturaPA file
- * Run Import FatturaPA wizard
+ * Andare su Contabilità --> Acquisti --> Fattura Elettronica
+ * Caricare il file XML
+ * Lanciare il wizard Importa Fattura Elettronica

@@ -39,7 +39,7 @@ class FatturapaPaymentData(models.Model):
 
     #  2.4.1
     payment_terms = fields.Many2one(
-        'fatturapa.payment_term', string="FatturaPA Payment Method")
+        'fatturapa.payment_term', string="Fattura Elettronica Payment Method")
     #  2.4.2
     payment_methods = fields.One2many(
         'fatturapa.payment.detail', 'payment_data_id',
@@ -54,7 +54,7 @@ class FatturapaPaymentDetail(models.Model):
     _name = "fatturapa.payment.detail"
     recipient = fields.Char('Recipient', size=200)
     fatturapa_pm_id = fields.Many2one(
-        'fatturapa.payment_method', string="FatturaPA Payment Method")
+        'fatturapa.payment_method', string="Fattura Elettronica Payment Method")
     payment_term_start = fields.Date('Payment Term Start')
     payment_days = fields.Integer('Payment Term Days')
     payment_due_date = fields.Date('Payment due Date')
@@ -245,6 +245,7 @@ class AccountInvoiceLine(models.Model):
         'discount.rise.price', 'invoice_line_id',
         'Discount and Rise Price Details'
     )
+    ftpa_line_number = fields.Integer("Line number", readonly=True)
 
 
 class FaturapaSummaryData(models.Model):
@@ -344,7 +345,7 @@ class AccountInvoice(models.Model):
     #  2.2.2
     fatturapa_summary_ids = fields.One2many(
         'faturapa.summary.data', 'invoice_id',
-        'FatturaPA Summary Datas'
+        'Fattura Elettronica Summary Datas'
     )
     #  2.3
     vaicle_registration = fields.Date('Veicole Registration')
@@ -352,12 +353,12 @@ class AccountInvoice(models.Model):
     #  2.4
     fatturapa_payments = fields.One2many(
         'fatturapa.payment.data', 'invoice_id',
-        'FatturaPA Payment Datas'
+        'Fattura Elettronica Payment Datas'
     )
     #  2.5
     fatturapa_doc_attachments = fields.One2many(
         'fatturapa.attachments', 'invoice_id',
-        'FatturaPA attachments'
+        'Fattura Elettronica attachments'
     )
     # 1.2.3
     efatt_stabile_organizzazione_indirizzo = fields.Char(

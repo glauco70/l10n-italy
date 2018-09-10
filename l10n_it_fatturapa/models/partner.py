@@ -25,3 +25,18 @@ class ResPartner(models.Model):
     register_fiscalpos = fields.Many2one(
         'fatturapa.fiscal_position',
         string="Register Fiscal Position")
+    # 1.1.4
+    codice_destinatario = fields.Char(
+        "Codice Destinatario",
+        help="Il codice, di 7 caratteri, assegnato dal Sdi ai soggetti che "
+             "hanno accreditato un canale; qualora il destinatario non abbia "
+             "accreditato un canale presso Sdi e riceva via PEC le fatture, "
+             "l'elemento deve essere valorizzato con tutti zeri ('0000000'). ")
+    # 1.1.6
+    pec_destinatario = fields.Char(
+        "PEC destinatario",
+        help="Indirizzo PEC al quale inviare la fattura elettronica. "
+             "Da valorizzare "
+             "SOLO nei casi in cui l'elemento informativo "
+             "<CodiceDestinatario> vale '0000000'"
+    )

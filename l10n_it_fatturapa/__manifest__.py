@@ -13,7 +13,7 @@
     'website': 'https://odoo-community.org',
     'license': 'LGPL-3',
     "depends": [
-        'account',
+        'l10n_it_account',
         'l10n_it_fiscalcode',
         'document',
         'l10n_it_ipa',

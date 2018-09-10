@@ -9,7 +9,10 @@
             <field name="arch" type="xml">
                 <page name="accounting" position="inside">
                     <group colspan="2" col="2" groups="account.group_account_invoice" name="fatturapa">
-                        <separator string="FatturaPA" colspan="2"/>
+                        <separator string="Fattura Elettronica" colspan="2"/>
+                        <field name="codice_destinatario" attrs="{'invisible': [('is_pa', '=', True)]}"/>
+                        <field name="pec_destinatario"
+                               attrs="{'invisible': ['|',('is_pa', '=', True), ('codice_destinatario', '!=', '0000000')]}"/>
                         <field name="eori_code"/>
                         <field name="license_number"/>
                     </group>

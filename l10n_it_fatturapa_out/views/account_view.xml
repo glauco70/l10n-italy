@@ -24,14 +24,14 @@
                             </field>
                         </group>
                     </page>
-                    <page string="FatturaPA">
+                    <page string="Fattura Elettronica">
                         <group>
                             <group string="Results">
                                 <field name="fatturapa_attachment_out_id"></field>
                             </group>
                         </group>
                     </page>
-                    <page string="FatturaPA attachments">
+                    <page string="Fattura Elettronica attachments">
                         <group string="Attachments">
                             <field name="fatturapa_doc_attachments" nolabel="1" >
                                 <tree string="Attachments">
