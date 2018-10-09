@@ -11,10 +11,6 @@
                     <field name="pec_server_id" attrs="{'invisible': [('channel_type', '!=', 'pec')]}"/>
                     <field name="email_exchange_system" attrs="{'invisible': [('channel_type', '!=', 'pec')]}"/>
                     <field name="email_from_for_fatturaPA" attrs="{'invisible': [('channel_type', '!=', 'pec')]}"/>
-                    <field name="web_server_address" attrs="{'invisible': [('channel_type', '!=', 'web')]}"/>
-                    <field name="web_server_login" attrs="{'invisible': [('channel_type', '!=', 'web')]}"/>
-                    <field name="web_server_password" attrs="{'invisible': [('channel_type', '!=', 'web')]}"/>
-                    <field name="web_server_token" attrs="{'invisible': [('channel_type', '!=', 'web')]}"/>
                     <field name="company_id" groups="base.group_multi_company"/>
                 </tree>
             </field>
@@ -32,12 +28,6 @@
                             <field name="pec_server_id" attrs="{'invisible': [('channel_type', '!=', 'pec')]}"/>
                             <field name="email_exchange_system" attrs="{'invisible': [('channel_type', '!=', 'pec')]}"/>
                             <field name="email_from_for_fatturaPA" attrs="{'invisible': [('channel_type', '!=', 'pec')]}"/>
-                        </group>
-                        <group>
-                            <field name="web_server_address" attrs="{'invisible': [('channel_type', '!=', 'web')]}"/>
-                            <field name="web_server_login" attrs="{'invisible': [('channel_type', '!=', 'web')]}"/>
-                            <field name="web_server_password" attrs="{'invisible': [('channel_type', '!=', 'web')]}"/>
-                            <field name="web_server_token" attrs="{'invisible': [('channel_type', '!=', 'web')]}"/>
                         </group>
                     </group>
                 </form>
