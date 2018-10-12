@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 #
-#    Copyright (C) 2017-2018 Sergio Corato
+#    Copyright (C) 2018 Sergio Corato
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published
@@ -22,7 +22,7 @@
     'version': '10.0.1.0.0',
     'development_status': 'Alfa',
     'category': 'other',
-    'author': 'Sergio Corato',
+    'author': 'Efatto.it di Sergio Corato',
     'maintainers': [],
     'description': 'Add channel to send-receice xml files to SdI.',
     'website': 'https://efatto.it',
