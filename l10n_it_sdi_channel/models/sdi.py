@@ -7,7 +7,7 @@ from odoo.exceptions import ValidationError
 
 SDI_CHANNELS = [
     ('pec', 'PEC'),
-    # ('web', 'Web service'),
+    ('web', 'Web service'),
     # ('sftp', 'SFTP'), # not implemented
 ]
 
@@ -28,3 +28,7 @@ class SdiChannel(models.Model):
     email_from_for_fatturaPA = fields.Char(
         "Sender Email Address for FatturaPA")
     email_exchange_system = fields.Char("Exchange System Email Address")
+    web_server_address = fields.Char(string='Web server address')
+    web_server_login = fields.Char(string='Web server login')
+    web_server_password = fields.Char(string='Web server password')
+    web_server_token = fields.Char(string='Web server token')
