@@ -1,38 +1,23 @@
 # -*- coding: utf-8 -*-
-#
-#
-#    Copyright (C) 2018 Sergio Corato
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Affero General Public License as published
-#    by the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Affero General Public License for more details.
-#
-#    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-#
+# Copyright 2018 Sergio Corato (https://efatto.it)
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
-    'name': 'SdI channel',
-    'version': '10.0.1.0.0',
-    'development_status': 'Alfa',
-    'category': 'other',
-    'author': 'Efatto.it di Sergio Corato',
-    'maintainers': [],
-    'description': 'Add channel to send-receice xml files to SdI.',
-    'website': 'https://efatto.it',
-    'license': 'AGPL-3',
-    'depends': [
-        'account',
+    "name": "SdI channel",
+    "summary": "Add channel to send-receice xml files to SdI.",
+    "version": "10.0.1.0.0",
+    "development_status": "Alpha",
+    "category": "other",
+    "website": "https://github.com/OCA/l10n-italy",
+    "author": "Efatto.it di Sergio Corato, Odoo Community Association (OCA)",
+    "maintainers": ["sergiocorato"],
+    "license": "AGPL-3",
+    "application": False,
+    "installable": True,
+    "depends": [
+        "account",
     ],
-    'data': [
-        'security/ir.model.access.csv',
-        'views/sdi_view.xml',
+    "data": [
+        "security/ir.model.access.csv",
+        "views/sdi_view.xml",
     ],
-    'installable': True,
 }

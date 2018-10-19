@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-##############################################################################
-# For copyright and license notices, see __openerp__.py file in root directory
-##############################################################################
-from odoo import models, fields, api, _
+# Copyright 2018 Sergio Corato (https://efatto.it)
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+
+from odoo import models, fields, api, _, exceptions
 
 SDI_CHANNELS = [
     ('pec', 'PEC'),
@@ -31,3 +31,13 @@ class SdiChannel(models.Model):
     web_server_login = fields.Char(string='Web server login')
     web_server_password = fields.Char(string='Web server password')
     web_server_token = fields.Char(string='Web server token')
+
+    @api.constrains('pec_server_id')
+    def check_pec_server_id(self):
+        for channel in self:
+            domain = [('pec_server_id', '=', channel.pec_server_id.id)]
+            elements = self.search(domain)
+            if len(elements) > 1:
+                raise exceptions.ValidationError(
+                    _("The channel %s with pec server %s already exists")
+                    % (channel.name, channel.pec_server_id.name))
