@@ -25,9 +25,9 @@ class MailThread(models.AbstractModel):
                       custom_values=None):
 
         if any("@pec.fatturapa.it" in x for x in [
-            message.get('Reply-To'),
-            message.get('From'),
-            message.get('Return-Path')
+            message.get('Reply-To', ''),
+            message.get('From', ''),
+            message.get('Return-Path', '')
         ]):
             _logger.info("Processing FatturaPA PEC Invoice with Message-Id: "
                          "{}".format(message.get('Message-Id')))
@@ -52,13 +52,14 @@ class MailThread(models.AbstractModel):
                         [att_id for model, att_id in attachment_ids]):
                     if fatturapa_regex.match(attachment.name):
                         # fixme this check is useful?
-                        fatturapa_attachment_out = self.search(
-                            ['|',
-                             ('datas_fname', '=', attachment.name),
-                             ('datas_fname', '=',
-                              attachment.name.replace('.p7m', ''))])
+                        fatturapa_attachment_out = self.env[
+                            'fatturapa.attachment.out'].search(
+                                ['|',
+                                 ('datas_fname', '=', attachment.name),
+                                 ('datas_fname', '=',
+                                  attachment.name.replace('.p7m', ''))])
                         if fatturapa_attachment_out:
-                            # out invoice found, so it isn't an incoming invoice
+                            # out invoice found so it isn't an incoming invoice
                             continue
 
                         is_stored = True if attachment._storage() == 'file'\
@@ -76,14 +77,15 @@ class MailThread(models.AbstractModel):
                             for inv_file_name in zf.namelist():
                                 inv_file = zf.open(inv_file_name)
                                 if fatturapa_regex.match(inv_file_name):
-                                    # check if this invoice is already parsed and
-                                    # present in other fatturapa.attachment.in
-                                    existing_fatturapa_atts = fatturapa_attachment_in. \
+                                    # check if this invoice is already parsed
+                                    # in other fatturapa.attachment.in
+                                    fatturapa_atts = \
+                                        fatturapa_attachment_in. \
                                         search([('name', '=', inv_file_name)])
-                                    if existing_fatturapa_atts:
+                                    if fatturapa_atts:
                                         _logger.info(
-                                            "Invoice xml already processed in %s"
-                                            % existing_fatturapa_atts.mapped(
+                                            "In invoice %s already processed"
+                                            % fatturapa_atts.mapped(
                                                 'name'))
                                     else:
                                         fatturapa_attachment_in.create({
@@ -92,12 +94,12 @@ class MailThread(models.AbstractModel):
                                             'datas': base64.encodestring(
                                                 inv_file.read())})
                         else:
-                            existing_fatturapa_atts = fatturapa_attachment_in.search(
+                            fatturapa_atts = fatturapa_attachment_in.search(
                                 [('name', '=', attachment.name)])
-                            if existing_fatturapa_atts:
+                            if fatturapa_atts:
                                 _logger.info(
                                     "Invoice xml already processed in %s"
-                                    % existing_fatturapa_atts.mapped('name'))
+                                    % fatturapa_atts.mapped('name'))
                             else:
                                 fatturapa_attachment_in.create({
                                     'ir_attachment_id': attachment.id})
