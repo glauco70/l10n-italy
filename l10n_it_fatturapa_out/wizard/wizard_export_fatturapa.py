@@ -23,6 +23,7 @@ import base64
 import logging
 from openerp.osv import orm
 from openerp.osv import fields
+from openerp.osv.orm import except_orm as UserError
 from openerp.addons.l10n_it_fatturapa.bindings.fatturapa_v_1_2 import (
     FatturaElettronica,
     FatturaElettronicaHeaderType,
@@ -34,8 +35,12 @@ from openerp.addons.l10n_it_fatturapa.bindings.fatturapa_v_1_2 import (
     IndirizzoType,
     IscrizioneREAType,
     CessionarioCommittenteType,
+    RappresentanteFiscaleType,
     DatiAnagraficiCedenteType,
     DatiAnagraficiCessionarioType,
+    DatiAnagraficiRappresentanteType,
+    TerzoIntermediarioSoggettoEmittenteType,
+    DatiAnagraficiTerzoIntermediarioType,
     FatturaElettronicaBodyType,
     DatiGeneraliType,
     DettaglioLineeType,
@@ -46,7 +51,9 @@ from openerp.addons.l10n_it_fatturapa.bindings.fatturapa_v_1_2 import (
     ContattiType,
     DatiPagamentoType,
     DettaglioPagamentoType,
-    AllegatiType
+    AllegatiType,
+    ScontoMaggiorazioneType,
+    CodiceArticoloType
 )
 from openerp.addons.l10n_it_fatturapa.models.account import (
     RELATED_DOCUMENT_TYPES)
