@@ -714,7 +714,7 @@ class WizardExportFatturapa(orm.TransientModel):
             prezzo_unitario = self._get_prezzo_unitario(cr, uid, line)
             DettaglioLinea = DettaglioLineeType(
                 NumeroLinea=str(line_no),
-                Descrizione=line.name,
+                Descrizione=line.name.replace('\n', ' '),
                 PrezzoUnitario=('%.' + str(
                     price_precision
                 ) + 'f') % prezzo_unitario,
@@ -943,7 +943,7 @@ class WizardExportFatturapa(orm.TransientModel):
                 if obj.report_print_menu:
                     self.generate_attach_report(cr, uid, ids, inv)
                 invoice_body = FatturaElettronicaBodyType()
-                inv.preventive_checks()
+                #inv.preventive_checks()
                 self.setFatturaElettronicaBody(
                     cr, uid, inv, invoice_body, context=context_partner)
                 fatturapa.FatturaElettronicaBody.append(invoice_body)
