@@ -180,7 +180,7 @@
             <field name="email">info@mypa.it</field>
             <field name="phone">003901141622023</field>
             <field name="website">www.mypa.it</field>
-            <field name="fiscalcode">00146089990</field>
+            <field name="fiscal_code">00146089990</field>
             <field name="vat">IT00146089990</field>
             <field name="ipa_code">79SRAK</field>
         </record>
@@ -197,7 +197,7 @@
             <field name="street">Via Milano, 1</field>
             <field name="email">info@mycompany.it</field>
             <field name="phone">123456789</field>
-            <field name="fiscalcode">03297040366</field>
+            <field name="fiscal_code">03297040366</field>
             <field name="vat">IT03297040366</field>
         </record>
 
@@ -213,7 +213,7 @@
             <field name="state_id" ref="base.state_us_2"/>
             <field name="street">Via Roma, 1</field>
             <field name="email">info@mycompany.it</field>
-            <field name="fiscalcode">07973780013</field>
+            <field name="fiscal_code">07973780013</field>
             <field name="vat">IT07973780013</field>
             <field name="codice_destinatario">0000000</field>
             <field name="pec_destinatario">test@pec.it</field>
