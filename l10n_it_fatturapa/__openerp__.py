@@ -87,11 +87,12 @@ To contribute to this module, please visit http://odoo-community.org.
     'license': 'AGPL-3',
     "depends": [
         'account',
-        'l10n_it_base',
-        'l10n_it_fiscalcode',
+        'techplus_l10n_it',  # 'l10n_it_base', region_id > region
+                             #  province_id > province, ecc. ecc.
+        # 'l10n_it_fiscalcode', integrato in techplus_l10n_it
         'document',
-        'l10n_it_ipa',
-        'l10n_it_rea',
+        #'l10n_it_ipa',  integrato in techplus_l10n_it
+        #'l10n_it_rea', integrato in techplus_l10n_it
         'base_iban',
         ],
 

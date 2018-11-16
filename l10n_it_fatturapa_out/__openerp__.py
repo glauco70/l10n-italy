@@ -84,7 +84,7 @@ To contribute to this module, please visit http://odoo-community.org.
     'license': 'AGPL-3',
     "depends": [
         'l10n_it_fatturapa',
-        'l10n_it_split_payment',
+        # 'l10n_it_split_payment',
         ],
     "data": [
         'wizard/wizard_export_fatturapa_view.xml',
