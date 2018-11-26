@@ -147,6 +147,10 @@ class withholding_tax_statement(models.Model):
             statement.amount_paid = tot_wt_amount_paid
 
     date = fields.Date('Date')
+    type = fields.Selection([
+        ('in', 'In'),
+        ('out', 'Out'),
+    ], 'Type', store=True, compute='_compute_type')
     move_id = fields.Many2one('account.move', 'Account move',
                               ondelete='cascade')
     invoice_id = fields.Many2one('account.invoice', 'Invoice',
@@ -165,6 +169,43 @@ class withholding_tax_statement(models.Model):
     display_name = fields.Char(
         string='Name', compute='_compute_display_name',
     )
+
+    @api.depends('move_id')
+    def _compute_type(self):
+        for st in self:
+            if st.move_id:
+                domain = [
+                    ('move_id', '=', st.move_id.id),
+                    ('account_id.user_type_id.type', '=', 'payable')]
+                lines = self.env['account.move.line'].search(domain)
+                if lines:
+                    st.type = 'in'
+                else:
+                    st.type = 'out'
+
+    def get_wt_competence(self, amount_reconcile):
+        dp_obj = self.env['decimal.precision']
+        amount_wt = 0
+        for st in self:
+            if st.invoice_id:
+                domain = [
+                    ('invoice_id', '=', st.invoice_id.id),
+                    ('withholding_tax_id', '=', st.withholding_tax_id.id)]
+                wt_inv = self.env['account.invoice.withholding.tax'].search(
+                    domain, limit=1)
+                if wt_inv:
+                    amount_base = st.invoice_id.amount_untaxed * \
+                        (amount_reconcile /
+                         st.invoice_id.amount_net_pay)
+                    base = round(amount_base * wt_inv.base_coeff, 5)
+                    amount_wt = round(base * wt_inv.tax_coeff,
+                                      dp_obj.precision_get('Account'))
+                if st.invoice_id.type in ['in_refund', 'out_refund']:
+                    amount_wt = -1 * amount_wt
+            elif st.move_id:
+                tax_data = st.withholding_tax_id.compute_tax(amount_reconcile)
+                amount_wt = tax_data['tax']
+            return amount_wt
 
     @api.multi
     def _compute_display_name(self):
@@ -190,6 +231,10 @@ class withholding_tax_move(models.Model):
     ], 'Status', readonly=True, copy=False, select=True,
         default='due')
     statement_id = fields.Many2one('withholding.tax.statement', 'Statement')
+    type = fields.Selection([
+        ('in', 'In'),
+        ('out', 'Out'),
+    ], 'Type', store=True, related='statement_id.type')
     date = fields.Date('Date Competence')
     wt_voucher_line_id = fields.Many2one('withholding.tax.voucher.line',
                                          'WT Account Voucher Line',
@@ -206,6 +251,106 @@ class withholding_tax_move(models.Model):
     display_name = fields.Char(
         string='Name', compute='_compute_display_name',
     )
+    wt_account_move_id = fields.Many2one(
+        'account.move', 'WT Move', ondelete='cascade')
+
+    def unlink(self):
+        for rec in self:
+            if rec.state not in ['due']:
+                raise ValidationError(
+                    _(('Warning! You can not delete withholding tax move in\
+                     state: {}').format(rec.state)))
+        return super(withholding_tax_move, self).unlink()
+
+    def generate_account_move(self):
+        """
+        Creation of account move to increase credit/debit vs tax authority
+        """
+        if self.wt_account_move_id:
+            raise ValidationError(
+                _('Warning! Wt account move already exists: %s') % (
+                    self.wt_account_move_id.name))
+        # Move - head
+        move_vals = {
+            'ref': _('WT %s - %s') % (
+                self.withholding_tax_id.code,
+                self.credit_debit_line_id.move_id.name),
+            'journal_id': self.withholding_tax_id.journal_id.id,
+            'date': self.payment_line_id.move_id.date,
+        }
+        # Move - lines
+        move_lines = []
+        for type in ('partner', 'tax'):
+            ml_vals = {
+                'ref': _('WT %s - %s - %s') % (
+                    self.withholding_tax_id.code, self.partner_id.name,
+                    self.credit_debit_line_id.move_id.name),
+                'name': '%s' % (self.credit_debit_line_id.move_id.name),
+                'date': move_vals['date']
+            }
+            # Credit/Debit line
+            if type == 'partner':
+                ml_vals['partner_id'] = self.payment_line_id.partner_id.id
+                ml_vals['account_id'] = \
+                    self.credit_debit_line_id.account_id.id
+                ml_vals['withholding_tax_generated_by_move_id'] = \
+                    self.payment_line_id.move_id.id
+                if self.payment_line_id.credit:
+                    ml_vals['credit'] = abs(self.amount)
+                else:
+                    ml_vals['debit'] = abs(self.amount)
+            # Authority tax line
+            elif type == 'tax':
+                ml_vals['name'] = '%s - %s' % (
+                    self.withholding_tax_id.code,
+                    self.credit_debit_line_id.move_id.name)
+                if self.payment_line_id.credit:
+                    ml_vals['debit'] = abs(self.amount)
+                    if self.credit_debit_line_id.invoice_id.type in\
+                            ['in_refund', 'out_refund']:
+                        ml_vals['account_id'] = \
+                            self.withholding_tax_id.account_payable_id.id
+                    else:
+                        ml_vals['account_id'] = \
+                            self.withholding_tax_id.account_receivable_id.id
+                else:
+                    ml_vals['credit'] = abs(self.amount)
+                    if self.credit_debit_line_id.invoice_id.type in\
+                            ['in_refund', 'out_refund']:
+                        ml_vals['account_id'] = \
+                            self.withholding_tax_id.account_receivable_id.id
+                    else:
+                        ml_vals['account_id'] = \
+                            self.withholding_tax_id.account_payable_id.id
+            # self.env['account.move.line'].create(move_vals)
+            move_lines.append((0, 0, ml_vals))
+
+        move_vals['line_ids'] = move_lines
+        move = self.env['account.move'].create(move_vals)
+        move.post()
+        # Save move in the wt move
+        self.wt_account_move_id = move.id
+
+        # Find lines for reconcile
+        line_to_reconcile = False
+        for line in move.line_ids:
+            if line.account_id.user_type_id.type in ['payable', 'receivable']\
+                    and line.partner_id:
+                line_to_reconcile = line
+                break
+        if line_to_reconcile:
+            if line_to_reconcile.account_id.user_type_id.type == 'payable':
+                debit_move_id = line_to_reconcile.id
+                credit_move_id = self.credit_debit_line_id.id
+            else:
+                credit_move_id = line_to_reconcile.id
+                debit_move_id = self.credit_debit_line_id.id
+            self.env['account.partial.reconcile'].\
+                with_context(no_generate_wt_move=True).create({
+                    'debit_move_id': debit_move_id,
+                    'credit_move_id': credit_move_id,
+                    'amount': self.amount,
+                })
 
     @api.multi
     def _compute_display_name(self):

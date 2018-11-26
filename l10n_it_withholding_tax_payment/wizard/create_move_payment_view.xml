@@ -13,7 +13,7 @@
     <field name="name">wizard.wt.move.payment.create.view</field>
     <field name="model">wizard.wt.move.payment.create</field>
     <field name="arch" type="xml">
-        <form string="Create Move Payment" version="7.0">
+        <form string="Create Move Payment">
             <group string="WT Moves">
                 <field name="wt_move_ids" nolabel="1"/>
             </group>
@@ -34,17 +34,6 @@
             key2="client_action_multi"
             id="wizard_wt_move_payment_create_action"
             view_id="wizard_wt_move_payment_create_view"/>
-       <!-- 
-<record id="wizard_wt_move_payment_create_action" model="ir.actions.act_window">
-     <field name="name">Create Move Payment</field>
-     <field name="type">ir.actions.act_window</field>
-     <field name="res_model">wizard.wt.move.payment.create</field>
-     <field name="view_type">form</field>
-     <field name="view_mode">form</field>
-     <field name="target">new</field>
-     <field name="view_id" ref="wizard_wt_move_payment_create_view"/>
- </record>
- -->
 
 </data>
 </openerp>

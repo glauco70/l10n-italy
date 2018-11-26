@@ -87,7 +87,12 @@
             <field name="name">view.withholding.tax.statement.tree</field>
             <field name="model">withholding.tax.statement</field>
             <field name="arch" type="xml">
+<<<<<<< HEAD
                 <tree string="Withholding Tax statement" version="7.0">
+=======
+                <tree string="Withholding Tax statement" delete="false">
+                    <field name="type"/>
+>>>>>>> 1d895e1e... Manage WT for customer invoices (Fix conflict)
                     <field name="partner_id"/>
                     <field name="date"/>
                     <field name="move_id"/>
@@ -142,6 +147,8 @@
                 <search string="Withholding Tax Statement">
                     <field name="partner_id" filter_domain="[('partner_id','ilike',self)]"/>
                     <field name="withholding_tax_id" filter_domain="[('withholding_tax_id','ilike',self)]"/>
+                    <filter name="typeIn" string="In type" domain="[('type','=','in')]" help="Supplier invoices"/>
+                    <filter name="typeOut" string="Out type" domain="[('type','=','out')]" help="Customer invoices"/>
                     <group expand="0" string="Group By...">
                         <filter string="Partners" icon="terp-personal" domain="[]" context="{'group_by':'partner_id'}"/>
                         <filter string="Withholding Tax" icon="terp-personal" domain="[]" context="{'group_by':'withholding_tax_id'}"/>
@@ -168,7 +175,12 @@
             <field name="name">view.withholding.tax.move.tree</field>
             <field name="model">withholding.tax.move</field>
             <field name="arch" type="xml">
+<<<<<<< HEAD
                 <tree string="Withholding Tax Move" version="7.0">
+=======
+                <tree string="Withholding Tax Move" delete="false">
+                    <field name="type"/>
+>>>>>>> 1d895e1e... Manage WT for customer invoices (Fix conflict)
                     <field name="partner_id"/>
                     <field name="date"/>
                     <field name="withholding_tax_id"/>
@@ -220,6 +232,9 @@
                 <search string="Withholding Tax Move">
                     <filter name="due" string="Due" domain="[('state','=','due')]" help="Due"/>
                     <filter name="paid" string="Paid" domain="[('state','=','paid')]" help="Paid"/>
+                    <newline/>
+                    <filter name="typeIn" string="In type" domain="[('type','=','in')]" help="Supplier invoices"/>
+                    <filter name="typeOut" string="Out type" domain="[('type','=','out')]" help="Customer invoices"/>
                     <field name="partner_id" filter_domain="[('partner_id','ilike',self)]"/>
                     <field name="withholding_tax_id" filter_domain="[('withholding_tax_id','ilike',self)]"/>
                     <group expand="0" string="Group By...">
