@@ -185,10 +185,8 @@ class welfare_fund_data_line(orm.Model):
             ('N6', 'inversione contabile (reverse charge)'),
         ], string="Non taxable nature"),
         #TODO: Il campo fund_nature è stato sostiruito con kind_id = fields.Many2one('account.tax.kind', string="Non taxable nature")
-        # TODO:    account.tax.kind è generato nel modulo l10n_it_account_tax_kind, da migrare?
         # Se mettiamo questo campo è necessario decommentarlo dalla vista l10n_it_fatturapa_in/views/account_view.xml
         # kind_id = fields.Many2one('account.tax.kind', string="Non taxable nature")
-        # Il campo kind_id è utilizzato nei wizard
         'welfare_rate_tax': fields.float('Welfare Rate tax'),
         'welfare_amount_tax': fields.float('Welfare Amount tax'),
         'welfare_taxable': fields.float('Welfare Taxable'),
@@ -347,12 +345,6 @@ class account_invoice_line(orm.Model):
         'Discount and Rise Price Details', copy=False
     ),
     'ftpa_line_number': fields.integer("Line number", readonly=True, copy=False) ,
-#TODO: Campi da migrare perchè non presenti 
-#    discount_rise_price_ids = fields.One2many(
-#        'discount.rise.price', 'invoice_line_id',
-#        'Discount and Rise Price Details', copy=False
-#    )
-#    ftpa_line_number = fields.Integer("Line number", readonly=True, copy=False) 
     }
 
 
@@ -463,8 +455,6 @@ class account_invoice(orm.Model):
         
         
         'ftpa_incoterms': fields.char(string="Incoterms", copy=False),
-#TODO: Campo da migrare
-#    ftpa_incoterms = fields.Char(string="Incoterms", copy=False)
 
         #  2.1.10
         'related_invoice_code': fields.char('Related invoice code'),
@@ -488,9 +478,7 @@ class account_invoice(orm.Model):
             'fatturapa.attachments', 'invoice_id',
             'FatturaPA attachments'
         ),
-        
-        
-        
+
     'efatt_stabile_organizzazione_indirizzo': fields.char(
         string="Indirizzo Organizzazione",
         help="Blocco da valorizzare nei casi di cedente / prestatore non "
@@ -535,60 +523,16 @@ class account_invoice(orm.Model):
              "dell'articolo 73 del DPR 633/72 (cio' consente al "
              "cedente/prestatore l'emissione nello stesso anno di piu' "
              "documenti aventi stesso numero)", copy=False),
-    'electronic_invoice_subjected': fields.boolean(
-        'Subjected to electronic invoice',
-        related='partner_id.electronic_invoice_subjected', readonly=True),
+    'electronic_invoice_subjected': fields.related('partner_id', 'electronic_invoice_subjected',
+                                                type='boolean', relation='res.partner',
+                                                string='Subjected to electronic invoice', readonly=True),
 
-#TODO: Campi da migrare
-#    efatt_stabile_organizzazione_indirizzo = fields.Char(
-#        string="Indirizzo Organizzazione",
-#        help="Blocco da valorizzare nei casi di cedente / prestatore non "
-#             "residente, con stabile organizzazione in Italia. Indirizzo "
-#             "della stabile organizzazione in Italia (nome della via, piazza "
-#             "etc.)",
-#        readonly=True, copy=False)
-#    efatt_stabile_organizzazione_civico = fields.Char(
-#        string="Civico Organizzazione",
-#        help="Numero civico riferito all'indirizzo (non indicare se gia' "
-#             "presente nell'elemento informativo indirizzo)",
-#        readonly=True, copy=False)
-#    efatt_stabile_organizzazione_cap = fields.Char(
-#        string="CAP Organizzazione",
-#        help="Codice Avviamento Postale",
-#        readonly=True, copy=False)
-#    efatt_stabile_organizzazione_comune = fields.Char(
-#        string="Comune Organizzazione",
-#        help="Comune relativo alla stabile organizzazione in Italia",
-#        readonly=True, copy=False)
-#    efatt_stabile_organizzazione_provincia = fields.Char(
-#        string="Provincia Organizzazione",
-#        help="Sigla della provincia di appartenenza del comune indicato "
-#             "nell'elemento informativo 1.2.3.4 <Comune>. Da valorizzare se "
-#             "l'elemento informativo 1.2.3.6 <Nazione> e' uguale a IT",
-#        readonly=True, copy=False)
-#    efatt_stabile_organizzazione_nazione = fields.Char(
-#        string="Nazione Organizzazione",
-#        help="Codice della nazione espresso secondo lo standard "
-#             "ISO 3166-1 alpha-2 code",
-#        readonly=True, copy=False)
-#    # 2.1.1.10
-#    efatt_rounding = fields.Float(
-#        "Arrotondamento", readonly=True,
-#        help="Eventuale arrotondamento sul totale documento (ammette anche il "
-#             "segno negativo)", copy=False
-#    )
-#    art73 = fields.Boolean(
-#        'Art73', readonly=True,
-#        help="Indica se il documento e' stato emesso secondo modalita' e "
-#             "termini stabiliti con decreto ministeriale ai sensi "
-#             "dell'articolo 73 del DPR 633/72 (cio' consente al "
-#             "cedente/prestatore l'emissione nello stesso anno di piu' "
-#             "documenti aventi stesso numero)", copy=False)
-#    electronic_invoice_subjected = fields.Boolean(
-#        'Subjected to electronic invoice',
-#        related='partner_id.electronic_invoice_subjected', readonly=True)
-    
     }
     _defaults = {
         'virtual_stamp': False
     }
+
+    def copy(self, cr, uid, id, default=None, context=None):
+        default['fatturapa_attachment_out_id'] = False
+        ret_id = super(account_invoice, self).copy(cr, uid, id, default, context=context)
+        return ret_id

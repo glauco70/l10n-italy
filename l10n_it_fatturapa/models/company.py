@@ -19,6 +19,7 @@
 ##############################################################################
 
 from openerp.osv import fields, orm
+from openerp.osv.osv import except_osv
 
 
 class res_company(orm.Model):
@@ -76,12 +77,6 @@ class res_company(orm.Model):
         help='Blocco da valorizzare nei casi di cedente / prestatore non '
              'residente, con stabile organizzazione in Italia'
         ),
-#TODO:    Campo da migrare
-#    fatturapa_stabile_organizzazione = fields.Many2one(
-#        'res.partner', 'Stabile Organizzazione',
-#        help='Blocco da valorizzare nei casi di cedente / prestatore non '
-#             'residente, con stabile organizzazione in Italia'
-#        )
     }
 
     def _check_fatturapa_sequence_id(self, cr, uid, ids, context=None):
@@ -202,13 +197,6 @@ class account_config_settings(orm.TransientModel):
             ),
 
     }
-#TODO Campo da migrare
-#    fatturapa_stabile_organizzazione = fields.Many2one(
-#        related='company_id.fatturapa_stabile_organizzazione',
-#        string="Stabile Organizzazione",
-#        help="Blocco da valorizzare nei casi di cedente / prestatore non "
-#             "residente, con stabile organizzazione in Italia"
-#        )
 
 
     def onchange_company_id(self, cr, uid, ids, company_id, context=None):
@@ -217,7 +205,6 @@ class account_config_settings(orm.TransientModel):
         if company_id:
             company = self.pool.get('res.company').browse(
                 cr, uid, company_id, context=context)
-            # TODO: Check if works sequence
             default_sequence = self.pool.get('ir.sequence').search(cr, uid, [
                 ('code', '=', 'account.invoice.fatturapa')
             ])

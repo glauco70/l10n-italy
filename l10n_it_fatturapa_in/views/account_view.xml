@@ -28,7 +28,7 @@
                     <notebook>
                         <page string="Invoices">
                             <field name="in_invoice_ids"
-                                   context="{'form_view_ref': 'account.invoice_supplier_form'}">
+                                   context="{'form_view_ref': 'account.invoice_supplier_form', 'tree_view_ref': 'account.invoice_tree'}">
                                 <tree>
                                     <field name="partner_id"/>
                                     <field name="date_invoice"/>
@@ -63,8 +63,6 @@
                 <tree string="Xml Attachment">
                     <field name="name"></field>
                     <field name="create_date"></field>
-	                <field name="xml_supplier_id"/>
-	                <field name="invoices_number"/>
 	                <field name="registered"/>
 	                <field name="in_invoice_ids"/>
                 </tree>
@@ -138,16 +136,7 @@
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="l10n_it_withholding_tax.invoice_supplier_form"></field>
             <field name="arch" type="xml">
-            	
-                <xpath expr="//div[contains(@class, 'oe_title')]" position="after">
-                    <div class="oe_right">
-                        <a href="http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.1/Formato_FatturaPA_tabellare_V1.1.pdf"
-                        id="ftpa_schema" style="color: #0000AD!important; padding: 5px; border: 1px solid black; background-color: lightgray !important; border-radius: 5px;" target="_blank">
-                        Fattura PA  V1.1 Schema
-                        </a>
-                    </div>
-                </xpath>
-                
+
                 <field name="partner_id" position="after">
                 	<field name="electronic_invoice_subjected" invisible="1"/>
                     <field name="tax_representative_id" readonly="1"></field>

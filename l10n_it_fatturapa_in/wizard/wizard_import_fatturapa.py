@@ -91,6 +91,7 @@ class WizardImportFatturapa(orm.TransientModel):
     ):
         if context is None:
             context = {}
+        context['inconsistencies'] = ''
         partner = self.pool['res.partner'].browse(
             cr, uid, partner_id, context=context)
         if (
@@ -1312,8 +1313,6 @@ class WizardImportFatturapa(orm.TransientModel):
             amount_untaxed += float(Riepilogo.ImponibileImporto)
         return amount_untaxed
 
-    # TODO: Migrare funzione _prepare_generic_line_data
-
     def check_invoice_amount(
         self, cr, uid, invoice, FatturaElettronicaBody, context=None
     ):
@@ -1537,9 +1536,6 @@ class WizardImportFatturapa(orm.TransientModel):
                     )
                 new_invoices.append(invoice_id)
                 invoice = invoice_model.browse(cr, uid, invoice_id, ctx)
-                self.check_CessionarioCommittente(
-                    cr, uid, invoice.company_id, fatt.FatturaElettronicaHeader,
-                    context=ctx)
                 self.check_invoice_amount(
                     cr, uid, invoice,
                     fattura,
@@ -1560,7 +1556,6 @@ class WizardImportFatturapa(orm.TransientModel):
             'context': context
         }
 
-    # TODO sul partner?
     def set_StabileOrganizzazione(self, cr, uid, CedentePrestatore, invoice):
         vals = {}
         if CedentePrestatore.StabileOrganizzazione:
