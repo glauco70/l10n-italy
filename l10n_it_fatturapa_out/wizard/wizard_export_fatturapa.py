@@ -221,8 +221,8 @@ class WizardExportFatturapa(orm.TransientModel):
 
         return True
 
-    def checkSetupPhone(self, phone_number):
-        if '+' in phone_number:
+    def checkSetupPhone(self, phone_number=False):
+        if phone_number and '+' in phone_number:
             phone_number = phonenumbers.format_number(phonenumbers.parse(phone_number), phonenumbers.PhoneNumberFormat.NATIONAL)
         return phone_number
 
