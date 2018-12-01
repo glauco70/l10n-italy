@@ -109,7 +109,7 @@ class WizardImportFatturapa(orm.TransientModel):
             )
         if (
             DatiAnagrafici.Anagrafica.Nome and
-            partner.firstname != DatiAnagrafici.Anagrafica.Nome
+            partner.first_name != DatiAnagrafici.Anagrafica.Nome
         ):
             if context.get('inconsistencies'):
                 context['inconsistencies'] += '\n'
@@ -118,11 +118,11 @@ class WizardImportFatturapa(orm.TransientModel):
                     "DatiAnagrafici.Anagrafica.Nome contains \"%s\"."
                     " Your System contains \"%s\""
                 )
-                % (DatiAnagrafici.Anagrafica.Nome, partner.firstname)
+                % (DatiAnagrafici.Anagrafica.Nome, partner.first_name)
             )
         if (
             DatiAnagrafici.Anagrafica.Cognome and
-            partner.lastname != DatiAnagrafici.Anagrafica.Cognome
+            partner.last_name != DatiAnagrafici.Anagrafica.Cognome
         ):
             if context.get('inconsistencies'):
                 context['inconsistencies'] += '\n'
@@ -131,7 +131,7 @@ class WizardImportFatturapa(orm.TransientModel):
                     "DatiAnagrafici.Anagrafica.Cognome contains \"%s\"."
                     " Your System contains \"%s\""
                 )
-                % (DatiAnagrafici.Anagrafica.Cognome, partner.lastname)
+                % (DatiAnagrafici.Anagrafica.Cognome, partner.last_name)
             )
 
     def getPartnerBase(self, cr, uid, DatiAnagrafici, context=None):
@@ -149,7 +149,7 @@ class WizardImportFatturapa(orm.TransientModel):
             cr, uid,
             ['|',
              ('vat', '=', vat or 0),
-             ('fiscalcode', '=', cf or 0),
+             ('fiscal_code', '=', cf or 0),
              ],
             context=context)
         commercial_partner = False
@@ -181,8 +181,8 @@ class WizardImportFatturapa(orm.TransientModel):
                 partner_ids = partner_model.search(
                     cr, uid,
                     [
-                        ('firstname', '=', DatiAnagrafici.Anagrafica.Nome),
-                        ('lastname', '=', DatiAnagrafici.Anagrafica.Cognome),
+                        ('first_name', '=', DatiAnagrafici.Anagrafica.Nome),
+                        ('last_name', '=', DatiAnagrafici.Anagrafica.Cognome),
                     ],
                     context=context)
         if partner_ids:
@@ -206,7 +206,7 @@ class WizardImportFatturapa(orm.TransientModel):
                     )
             vals = {
                 'vat': vat,
-                'fiscalcode': cf,
+                'fiscal_code': cf,
                 'customer': False,
                 'supplier': True,
                 'is_company': (
@@ -215,9 +215,9 @@ class WizardImportFatturapa(orm.TransientModel):
                 'country_id': country_id,
             }
             if DatiAnagrafici.Anagrafica.Nome:
-                vals['firstname'] = DatiAnagrafici.Anagrafica.Nome
+                vals['first_name'] = DatiAnagrafici.Anagrafica.Nome
             if DatiAnagrafici.Anagrafica.Cognome:
-                vals['lastname'] = DatiAnagrafici.Anagrafica.Cognome
+                vals['last_name'] = DatiAnagrafici.Anagrafica.Cognome
             if DatiAnagrafici.Anagrafica.Denominazione:
                 vals['name'] = DatiAnagrafici.Anagrafica.Denominazione
 
@@ -256,7 +256,7 @@ class WizardImportFatturapa(orm.TransientModel):
                         % Provincia
                     )
                 else:
-                    vals['province'] = prov_sede[0]
+                    vals['province_id'] = prov_sede[0]
             vals['register_code'] = (
                 cedPrest.DatiAnagrafici.NumeroIscrizioneAlbo)
             vals['register_regdate'] = (
@@ -1244,10 +1244,9 @@ class WizardImportFatturapa(orm.TransientModel):
                 )
         if line.ScontoMaggiorazione:
             for DiscRisePriceLine in line.ScontoMaggiorazione:
-                DiscRisePriceVals = self.with_context(
-                    drtype='e_invoice_line_id'
-                )._prepareDiscRisePriceLine(
-                    einvoiceline, DiscRisePriceLine
+                DiscRisePriceVals = self._prepareDiscRisePriceLine(
+                    cr, uid, einvoiceline, DiscRisePriceLine,
+                    context={'drtype': 'e_invoice_line_id'}
                 )
                 self.pool['discount.rise.price'].create(cr, uid, DiscRisePriceVals)
         if line.AltriDatiGestionali:

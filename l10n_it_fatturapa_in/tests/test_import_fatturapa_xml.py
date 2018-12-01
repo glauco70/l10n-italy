@@ -107,7 +107,7 @@ class TestFatturaPAXMLValidation(test_common.SingleTransactionCase):
             invoice.fatturapa_summary_ids[0].payability, 'D')
         self.assertEqual(invoice.partner_id.name, "SOCIETA' ALPHA SRL")
         self.assertEqual(invoice.partner_id.street, "VIALE ROMA 543")
-        self.assertEqual(invoice.partner_id.province.code, "SS")
+        self.assertEqual(invoice.partner_id.province_id.code, "SS")
         self.assertEqual(
             invoice.tax_representative_id.name, "Rappresentante fiscale")
         self.assertEqual(invoice.welfare_fund_ids[0].welfare_rate_tax, 0.04)
@@ -182,8 +182,8 @@ class TestFatturaPAXMLValidation(test_common.SingleTransactionCase):
         self.assertEqual(invoice.supplier_invoice_number, 'FT/2015/0008')
         self.assertEqual(invoice.sender, 'TZ')
         self.assertEqual(invoice.intermediary.name, 'ROSSI MARIO')
-        self.assertEqual(invoice.intermediary.firstname, 'MARIO')
-        self.assertEqual(invoice.intermediary.lastname, 'ROSSI')
+        self.assertEqual(invoice.intermediary.first_name, 'MARIO')
+        self.assertEqual(invoice.intermediary.last_name, 'ROSSI')
         self.assertEqual(
             invoice.invoice_line[0].discount_rise_price_ids[0].name, 'SC')
         self.assertEqual(
@@ -282,8 +282,8 @@ class TestFatturaPAXMLValidation(test_common.SingleTransactionCase):
         self.assertEqual(invoice.supplier_invoice_number, 'FT/2015/0012')
         self.assertEqual(invoice.sender, 'TZ')
         self.assertEqual(invoice.intermediary.name, 'ROSSI MARIO')
-        self.assertEqual(invoice.intermediary.firstname, 'MARIO')
-        self.assertEqual(invoice.intermediary.lastname, 'ROSSI')
+        self.assertEqual(invoice.intermediary.first_name, 'MARIO')
+        self.assertEqual(invoice.intermediary.last_name, 'ROSSI')
 
     def test_13_xml_import(self):
         # inconsistencies must not be duplicated
