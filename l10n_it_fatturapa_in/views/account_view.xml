@@ -402,11 +402,7 @@
 			                        <group string="Dati generali">
 			                            <field name="efatt_rounding"/>
 			                            <field name="art73"/>
-<<<<<<< HEAD
 
-=======
-			                            
->>>>>>> 7.0_fattura_pa_pec
 			                       </group>
 			                    </group>
 
@@ -416,11 +412,7 @@
                         </notebook>
                     </page>
                 </xpath>
-<<<<<<< HEAD
 
-=======
-                 
->>>>>>> 7.0_fattura_pa_pec
 	            <field name="period_id" position="after">
 	                <field name="fatturapa_attachment_in_id" attrs="{'readonly': [('state', 'not in', ['draft'])]}"></field>
 	            </field>
