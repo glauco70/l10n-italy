@@ -149,7 +149,7 @@ class WizardExportFatturapa(orm.TransientModel):
                 _('Error!'), _('Company Country not set.'))
         IdPaese = company.country_id.code
 
-        IdCodice = company.partner_id.fiscal_code
+        IdCodice = company.partner_id.fiscalcode
         if not IdCodice:
             if company.vat:
                 IdCodice = company.vat[2:]
@@ -254,9 +254,9 @@ class WizardExportFatturapa(orm.TransientModel):
         CedentePrestatore.DatiAnagrafici.Anagrafica = AnagraficaType(
             Denominazione=company.name)
 
-        if company.partner_id.fiscal_code:
+        if company.partner_id.fiscalcode:
             CedentePrestatore.DatiAnagrafici.CodiceFiscale = (
-                company.partner_id.fiscal_code)
+                company.partner_id.fiscalcode)
         CedentePrestatore.DatiAnagrafici.RegimeFiscale = fatturapa_fp.code
         return True
 
@@ -286,9 +286,6 @@ class WizardExportFatturapa(orm.TransientModel):
         if not company.city:
             raise orm.except_orm(
                 _('Error!'), _('City not set.'))
-        if not company.partner_id.province_id:
-            raise orm.except_orm(
-                _('Error!'), _('Province not set.'))
         if not company.country_id:
             raise orm.except_orm(
                 _('Error!'), _('Country not set.'))
@@ -298,10 +295,9 @@ class WizardExportFatturapa(orm.TransientModel):
             Indirizzo=company.street,
             CAP=company.zip,
             Comune=company.city,
-            Provincia=company.partner_id.province_id.code,
             Nazione=company.country_id.code)
-        if company.partner_id.province_id:
-            CedentePrestatore.Sede.Provincia = company.partner_id.province_id.code
+        if company.partner_id.province:
+            CedentePrestatore.Sede.Provincia = company.partner_id.province.code
         return True
 
     def _setStabileOrganizzazione(self, cr, uid, CedentePrestatore,
@@ -327,9 +323,9 @@ class WizardExportFatturapa(orm.TransientModel):
                 CAP=stabile_organizzazione.zip,
                 Comune=stabile_organizzazione.city,
                 Nazione=stabile_organizzazione.country_id.code)
-            if stabile_organizzazione.province_id:
+            if stabile_organizzazione.province:
                 CedentePrestatore.StabileOrganizzazione.Provincia = (
-                    stabile_organizzazione.province_id.code)
+                    stabile_organizzazione.province.code)
         return True
 
     def _setRea(self, cr, uid, CedentePrestatore, company, context=None):
@@ -399,12 +395,12 @@ class WizardExportFatturapa(orm.TransientModel):
             context = {}
         fatturapa.FatturaElettronicaHeader.CessionarioCommittente.\
             DatiAnagrafici = DatiAnagraficiCessionarioType()
-        if not partner.vat and not partner.fiscal_code:
+        if not partner.vat and not partner.fiscalcode:
             raise orm.except_orm(
                 _('Error!'), _('Partner VAT and Fiscalcode not set.'))
-        if partner.fiscal_code:
+        if partner.fiscalcode:
             fatturapa.FatturaElettronicaHeader.CessionarioCommittente.\
-                DatiAnagrafici.CodiceFiscale = partner.fiscal_code
+                DatiAnagrafici.CodiceFiscale = partner.fiscalcode
         if partner.vat:
             fatturapa.FatturaElettronicaHeader.CessionarioCommittente.\
                 DatiAnagrafici.IdFiscaleIVA = IdFiscaleType(
@@ -414,13 +410,13 @@ class WizardExportFatturapa(orm.TransientModel):
                 DatiAnagrafici.Anagrafica = AnagraficaType(
                     Denominazione=partner.name)
         else:
-            if not partner.last_name or not partner.first_name:
+            if not partner.lastname or not partner.firstname:
                 raise orm.except_orm(_('Error!'),
                     _("Partner %s deve avere nome e cognome") % partner.name)
             fatturapa.FatturaElettronicaHeader.CessionarioCommittente.\
                 DatiAnagrafici.Anagrafica = AnagraficaType(
-                    Cognome=partner.last_name,
-                    Nome=partner.first_name
+                    Cognome=partner.lastname,
+                    Nome=partner.firstname
                 )
         # not using for now
 
@@ -451,12 +447,12 @@ class WizardExportFatturapa(orm.TransientModel):
             RappresentanteFiscaleType())
         fatturapa.FatturaElettronicaHeader.RappresentanteFiscale.\
             DatiAnagrafici = DatiAnagraficiRappresentanteType()
-        if not partner.vat and not partner.fiscal_code:
+        if not partner.vat and not partner.fiscalcode:
             raise orm.except_orm(
                 _('Error!'), _('VAT and Fiscalcode not set for %s') % partner.name)
-        if partner.fiscal_code:
+        if partner.fiscalcode:
             fatturapa.FatturaElettronicaHeader.RappresentanteFiscale.\
-                DatiAnagrafici.CodiceFiscale = partner.fiscal_code
+                DatiAnagrafici.CodiceFiscale = partner.fiscalcode
         if partner.vat:
             fatturapa.FatturaElettronicaHeader.RappresentanteFiscale.\
                 DatiAnagrafici.IdFiscaleIVA = IdFiscaleType(
@@ -478,13 +474,13 @@ class WizardExportFatturapa(orm.TransientModel):
         fatturapa.FatturaElettronicaHeader.\
             TerzoIntermediarioOSoggettoEmittente.\
             DatiAnagrafici = DatiAnagraficiTerzoIntermediarioType()
-        if not partner.vat and not partner.fiscal_code:
+        if not partner.vat and not partner.fiscalcode:
             raise orm.except_orm(
                 _('Error!'), _('Partner VAT and Fiscalcode not set.'))
-        if partner.fiscal_code:
+        if partner.fiscalcode:
             fatturapa.FatturaElettronicaHeader.\
                 TerzoIntermediarioOSoggettoEmittente.\
-                DatiAnagrafici.CodiceFiscale = partner.fiscal_code
+                DatiAnagrafici.CodiceFiscale = partner.fiscalcode
         if partner.vat:
             fatturapa.FatturaElettronicaHeader.\
                 TerzoIntermediarioOSoggettoEmittente.\
@@ -515,9 +511,9 @@ class WizardExportFatturapa(orm.TransientModel):
         if not partner.city:
             raise orm.except_orm(
                 _('Error!'), _('Customer city not set.'))
-        if not partner.province_id:
-            raise orm.except_orm(
-                _('Error!'), _('Customer province not set.'))
+        # if not partner.province:
+        #     raise orm.except_orm(
+        #         _('Error!'), _('Customer province not set.'))
         if not partner.country_id:
             raise orm.except_orm(
                 _('Error!'), _('Customer country not set.'))
@@ -528,8 +524,10 @@ class WizardExportFatturapa(orm.TransientModel):
                 Indirizzo=partner.street,
                 CAP=partner.zip,
                 Comune=partner.city,
-                Provincia=partner.province_id.code,
                 Nazione=partner.country_id.code))
+        if partner.province:
+            fatturapa.FatturaElettronicaHeader.CessionarioCommittente.Sede.\
+                Provincia=partner.province.code
 
         return True
 

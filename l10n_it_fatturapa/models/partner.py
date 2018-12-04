@@ -87,7 +87,7 @@ class res_partner(orm.Model):
                         "deve avere il Codice Destinatario lungo 7 caratteri"
                     ) % partner.name)
                 if not partner.is_company and (
-                    not partner.last_name or not partner.first_name
+                    not partner.lastname or not partner.firstname
                 ):
                     raise except_osv(_('Error' ),_(
                         "Il partner %s, essendo persona "
@@ -97,7 +97,7 @@ class res_partner(orm.Model):
                     not partner.is_pa and
                     partner.codice_destinatario == '0000000'
                 ):
-                    if not partner.vat and not partner.fiscal_code:
+                    if not partner.vat and not partner.fiscalcode:
                         raise except_osv(_('Error' ),_(
                             "Il partner %s, con Codice Destinatario '0000000',"
                             " deve avere o P.IVA o codice fiscale"
@@ -115,7 +115,7 @@ class res_partner(orm.Model):
                         raise except_osv(_('Error' ),_(
                             'Customer %s: city is needed for XML generation.'
                         ) % partner.name)
-                    if not partner.province_id:
+                    if not partner.province:
                         raise except_osv(_('Error' ),_(
                             'Customer %s: province is needed for XML '
                             'generation.'
@@ -128,10 +128,9 @@ class res_partner(orm.Model):
         return True
 
     _constraints = [
-        (_check_ftpa_partner_data, 'Some customer infos are needed.', [
-            'is_pa', 'ipa_code', 'codice_destinatario', 'company_type',
-            'electronic_invoice_subjected', 'vat', 'fiscal_code', 'last_name',
-            'first_name', 'customer', 'street', 'zip', 'city', 'province_id',
-            'country_id']),
+        (_check_ftpa_partner_data, 'Some customer infos are needed.', ['is_pa', 'ipa_code', 'codice_destinatario', 'company_type',
+        'electronic_invoice_subjected', 'vat', 'fiscalcode', 'lastname',
+        'firstname', 'customer', 'street', 'zip', 'city', 'province',
+        'country_id']),
     ]
 

@@ -439,7 +439,7 @@ class account_invoice(orm.Model):
             'Related DdT'
         ),
         #  2.1.9
-        'carrier': fields.many2one(
+        'carrier': fields.many2one(  # nb carrier_id is already used
             'res.partner', string="Carrier"),
         'transport_vehicle': fields.char('Vehicle', size=80),
         'transport_reason': fields.char('Reason', size=80),
