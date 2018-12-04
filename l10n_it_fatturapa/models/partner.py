@@ -62,7 +62,7 @@ class res_partner(orm.Model):
         'electronic_invoice_subjected' : fields.boolean(
         "Subjected to electronic invoice"),
     }
-
+    
     _defaults = {
         'codice_destinatario': '0000000',
         }
