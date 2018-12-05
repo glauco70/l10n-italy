@@ -1,23 +1,17 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    Tech Plus l10n it
-#    Copyright (C) Tech Plus srl (<http://www.techplus.it>).
+#    Italian Localization - FatturaPA - Emission - PEC Support
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Affero General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+#    Author(s): Ermanno Gnan (ermannognan@gmai.com)
+#    Copyright © 2018 Sergio Corato (https://efatto.it)
+#    Copyright © 2018 Enrico Ganzaroli (enrico.gz@gmail.com)
+#    Copyright © 2018 Ermanno Gnan (ermannognan@gmail.com)
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    License AGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
 #
 ##############################################################################
+
 {
     'name': 'Account Stamp',
     'version': '0.1',
@@ -40,15 +34,12 @@ Functionalities:
         'web',
         'product',
         'account',
-        'l10n_it',
     ],
     'data': [
         'data/data.xml',
-        # 'security/ir.model.access.csv',
-        # 'account_view.xml',
-        # 'invoice_view.xml',
-        'product_view.xml',
-        # 'menu.xml',
+        'views/invoice_view.xml',
+        'views/product_view.xml',
+        # 'views/menu.xml',
     ],
     'js': [
     ],
