@@ -20,7 +20,7 @@
                                 </tree>
                             </field>
                         </group>
-                        <p>
+                        <p attrs="{'invisible': [('is_stamp', '=', False)]}">
                             For each invoice, the base amount for each selected tax code account will be added up and used to determine the application of the account stamp.
                         </p>
                     </div>
