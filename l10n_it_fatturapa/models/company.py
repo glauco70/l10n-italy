@@ -29,10 +29,6 @@ class res_company(orm.Model):
             'fatturapa.fiscal_position', 'Fiscal Position',
             help="Fiscal position used by FatturaPA",
             ),
-        'fatturapa_format_id': fields.many2one(
-            'fatturapa.format', 'Format',
-            help="FatturaPA Format",
-            ),
         'fatturapa_sequence_id': fields.many2one(
             'ir.sequence', 'Sequence',
             help="il progressivo univoco del file è rappresentato da una "
@@ -108,13 +104,6 @@ class account_config_settings(orm.TransientModel):
             relation="fatturapa.fiscal_position",
             string="Fiscal Position",
             help='Fiscal position used by FatturaPA'
-            ),
-        'fatturapa_format_id': fields.related(
-            'company_id', 'fatturapa_format_id',
-            type='many2one',
-            relation="fatturapa.format",
-            string="Format",
-            help='FatturaPA Format'
             ),
         'fatturapa_sequence_id': fields.related(
             'company_id', 'fatturapa_sequence_id',
@@ -258,10 +247,6 @@ class account_config_settings(orm.TransientModel):
                     company.fatturapa_stabile_organizzazione and
                     company.fatturapa_stabile_organizzazione.id or False
                     ),
-                'fatturapa_format_id': (
-                    company.fatturapa_format_id and
-                    company.fatturapa_format_id.id or False
-                    ),
                 })
         else:
             res['value'].update({
@@ -277,6 +262,5 @@ class account_config_settings(orm.TransientModel):
                 'fatturapa_tax_representative': False,
                 'fatturapa_sender_partner': False,
                 'fatturapa_stabile_organizzazione': False,
-                'fatturapa_format_id': False,
                 })
         return res
