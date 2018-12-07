@@ -14,7 +14,7 @@
 
 {
     'name': 'Account Stamp',
-    'version': '0.1',
+    'version': '7.0.0.0.1',
     'category': 'Localisation/Italy',
     'description': """
 OpenERP Account Stamp
@@ -22,8 +22,8 @@ OpenERP Account Stamp
 Functionalities:
 
 - Adds account stamp support.
-- Invoices stamp lines reports: "assolvimento dell’imposta di bollo ai sensi dell’articolo 6, comma 2, del Dm 17 giugno 2014".
-- Stamp payment management: lista delle marche da bollo non ancora assolte con giorni rimanenti alla scadenza per l'assoluzione. Le righe fattura con marca da bollo hanno uno stato che sarà "da assolvere" o "assolte".
+- Invoices stamp lines reports: "assolvimento dell’imposta di bollo ai sensi 
+dell’articolo 6, comma 2, del Dm 17 giugno 2014".
 
 
 """,
@@ -31,7 +31,6 @@ Functionalities:
     'website': 'http://www.techplus.it',
     'summary': 'account stamp automatic management',
     'depends': [
-        'web',
         'product',
         'account',
     ],
@@ -40,10 +39,6 @@ Functionalities:
         'views/invoice_view.xml',
         'views/product_view.xml',
         # 'views/menu.xml',
-    ],
-    'js': [
-    ],
-    'qweb': [
     ],
     'installable': True,
     'auto_install': False,
