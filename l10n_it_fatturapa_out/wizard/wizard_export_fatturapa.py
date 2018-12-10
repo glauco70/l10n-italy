@@ -601,7 +601,7 @@ class WizardExportFatturapa(orm.TransientModel):
         if invoice.comment:
             # max length of Causale is 200
             caus_list = invoice.comment.split('\n')
-            for causale in caus_list:
+            for causale in [x for x in caus_list if x != '']:
                 # Remove non latin chars, but go back to unicode string,
                 # as expected by String200LatinType
                 causale = causale.encode(
