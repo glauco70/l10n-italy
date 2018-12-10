@@ -183,8 +183,8 @@ class FatturaPAAttachmentOut(orm.Model):
                         'state': 'sender_error',
                         'last_sdi_response': 'SdI ID: {}; '
                         'Message ID: {}; Receipt date: {}; '
-                        'Error: {}'.format(
-                            id_sdi, message_id, receipt_dt, error_str)
+                        'Error: '.format(
+                            id_sdi, message_id, receipt_dt)
                     })
                 elif message_type == 'MC':  # 3A. Mancata consegna
                     missed_delivery_note = root.find('Descrizione').text
