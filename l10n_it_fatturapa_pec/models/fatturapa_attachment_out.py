@@ -179,7 +179,7 @@ class FatturaPAAttachmentOut(orm.Model):
                             error.find('Suggerimento').text if error.find(
                                 'Suggerimento') is not None else ''
                         )
-                    error_str = error_str.decode('utf-8', 'ignore')
+                    error_str = error_str.decode('ascii', 'ignore')
                     fatturapa_attachment_out.write({
                         'state': 'sender_error',
                         'last_sdi_response': 'SdI ID: {}; '
