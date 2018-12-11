@@ -79,8 +79,8 @@ class FatturaPAAttachmentOut(orm.Model):
                 'model': self._name,
                 'res_id': attachment.id,
                 'subject': attachment.name,
-                'body': 'XML file for FatturaPA {} sent to Exchange System to '
-                        'the email address {}.'
+                'body': u'XML file for FatturaPA {} sent to Exchange System to '
+                        u'the email address {}.'
                 .format(
                     attachment.name,
                     company.email_exchange_system),
@@ -151,7 +151,7 @@ class FatturaPAAttachmentOut(orm.Model):
                         # out invoice not found, so it is an incoming invoice
                         return message_dict
                     else:
-                        _logger.info('Error: FatturaPA {} not found.'.format(
+                        _logger.info(u'Error: FatturaPA {} not found.'.format(
                             file_name))
                         # TODO Send a mail warning
                         return message_dict
@@ -171,7 +171,7 @@ class FatturaPAAttachmentOut(orm.Model):
                     error_list = root.find('ListaErrori')
                     error_str = ''
                     for error in error_list:
-                        error_str += "\n[%s] %s %s" % (
+                        error_str += u"\n[%s] %s %s" % (
                             error.find('Codice').text if error.find(
                                 'Codice') is not None else '',
                             error.find('Descrizione').text if error.find(
@@ -181,19 +181,23 @@ class FatturaPAAttachmentOut(orm.Model):
                         )
                     fatturapa_attachment_out.write({
                         'state': 'sender_error',
-                        'last_sdi_response': 'SdI ID: {}; '
-                        'Message ID: {}; Receipt date: {}; '
-                        'Error: {}'.format(
-                            id_sdi, message_id, receipt_dt, error_str)
+                        'last_sdi_response': (
+                            u'SdI ID: {}; '
+                            u'Message ID: {}; '
+                            u'Receipt date: {}; '
+                            u'Error: {}'
+                        ).format(id_sdi, message_id, receipt_dt, error_str)
                     })
                 elif message_type == 'MC':  # 3A. Mancata consegna
                     missed_delivery_note = root.find('Descrizione').text
                     fatturapa_attachment_out.write({
                         'state': 'recipient_error',
-                        'last_sdi_response': 'SdI ID: {}; '
-                        'Message ID: {}; Receipt date: {}; '
-                        'Missed delivery note: {}'.format(
-                            id_sdi, message_id, receipt_dt,
+                        'last_sdi_response': (
+                            u'SdI ID: {}; '
+                            u'Message ID: {}; '
+                            u'Receipt date: {}; '
+                            u'Missed delivery note: {}'
+                        ).format(id_sdi, message_id, receipt_dt,
                             missed_delivery_note)
                     })
                 elif message_type == 'RC':  # 3B. Ricevuta di Consegna
@@ -201,10 +205,12 @@ class FatturaPAAttachmentOut(orm.Model):
                     fatturapa_attachment_out.write({
                         'state': 'validated',
                         'delivered_date': fields.Datetime.now(),
-                        'last_sdi_response': 'SdI ID: {}; '
-                        'Message ID: {}; Receipt date: {}; '
-                        'Delivery date: {}'.format(
-                            id_sdi, message_id, receipt_dt, delivery_dt)
+                        'last_sdi_response': (
+                            u'SdI ID: {}; '
+                            u'Message ID: {}; '
+                            u'Receipt date: {}; '
+                            u'Delivery date: {}'
+                        ).format(id_sdi, message_id, receipt_dt, delivery_dt)
                     })
                 elif message_type == 'NE':  # 4A. Notifica Esito per PA
                     esito_committente = root.find('EsitoCommittente')
@@ -218,19 +224,23 @@ class FatturaPAAttachmentOut(orm.Model):
                                 state = 'rejected'
                             fatturapa_attachment_out.write({
                                 'state': state,
-                                'last_sdi_response': 'SdI ID: {}; '
-                                'Message ID: {}; Response: {}; '.format(
-                                    id_sdi, message_id, esito.text)
+                                'last_sdi_response': (
+                                    u'SdI ID: {}; '
+                                    u'Message ID: {}; '
+                                    u'Response: {}; '
+                                ).format(id_sdi, message_id, esito.text)
                             })
                 elif message_type == 'DT':  # 5. Decorrenza Termini per PA
                     description = root.find('Descrizione')
                     if description is not None:
                         fatturapa_attachment_out.write({
                             'state': 'validated',
-                            'last_sdi_response': 'SdI ID: {}; '
-                            'Message ID: {}; Receipt date: {}; '
-                            'Description: {}'.format(
-                                id_sdi, message_id, receipt_dt,
+                            'last_sdi_response': (
+                                u'SdI ID: {}; '
+                                u'Message ID: {}; '
+                                u'Receipt date: {}; '
+                                u'Description: {}'
+                            ).format(id_sdi, message_id, receipt_dt,
                                 description.text)
                         })
                 # not implemented - todo
@@ -240,10 +250,11 @@ class FatturaPAAttachmentOut(orm.Model):
                         fatturapa_attachment_out.write({
                             'state': 'validated',
                             'last_sdi_response': (
-                                'SdI ID: {}; Message ID: {}; Receipt date: {};'
-                                ' Description: {}'
-                            ).format(
-                                id_sdi, message_id, receipt_dt,
+                                u'SdI ID: {}; '
+                                u'Message ID: {}; '
+                                u'Receipt date: {};'
+                                u' Description: {}'
+                            ).format(id_sdi, message_id, receipt_dt,
                                 description.text)
                         })
 
