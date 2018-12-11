@@ -204,7 +204,7 @@ class FatturaPAAttachmentOut(orm.Model):
                     delivery_dt = root.find('DataOraConsegna').text
                     fatturapa_attachment_out.write({
                         'state': 'validated',
-                        'delivered_date': fields.Datetime.now(),
+                        'delivered_date': datetime.now(),
                         'last_sdi_response': (
                             u'SdI ID: {}; '
                             u'Message ID: {}; '
