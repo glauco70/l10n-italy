@@ -23,10 +23,12 @@ class product_template(Model):
         return True
 
     _columns = {
-        'stamp_apply_tax_code_ids': fields.many2many('account.tax.code',
-            'product_stamp_account_tax_code_rel',
-            'product_id', 'tax_code_id', string='Stamp tax codes'),
-        'stamp_apply_min_total_base': fields.float('Stamp apply min total base',
+        'stamp_apply_tax_ids': fields.many2many(
+            'account.tax',
+            'product_tax_account_tax__rel',
+            'product_id', 'tax_id', string='Stamp taxes'),
+        'stamp_apply_min_total_base': fields.float(
+            'Stamp apply min total base',
             digits_compute=dp.get_precision('Account')),
         'is_stamp': fields.boolean('Is stamp'),
     }
@@ -34,5 +36,5 @@ class product_template(Model):
     _constraints = [(
         _check_stamp_apply_tax,
         'The product must be a stamp to set apply taxes!',
-        ['stamp_apply_tax_code_ids', 'is_stamp']
-        ),]
+        ['stamp_apply_tax_ids', 'is_stamp']
+    )]

@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
-##############################################################################
-#
-#    Italian Localization - Account Stamp
-#    See __openerp__.py file for copyright and licensing details.
-#
-##############################################################################
+# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
 
 import invoice
 import product
+import company
