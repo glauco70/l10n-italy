@@ -7,10 +7,10 @@ from openerp.osv import fields, orm
 class ResCompany(orm.Model):
     _inherit = 'res.company'
 
-    columns = {
+    _columns = {
         'tax_stamp_product_id': fields.many2one(
-        'product.product', 'Tax Stamp Product',
-        help="Product used to model DatiBollo XML element on bills."
+            'product.product', 'Tax Stamp Product',
+            help="Product used to model DatiBollo XML element on bills."
         )
     }
 
@@ -18,13 +18,13 @@ class ResCompany(orm.Model):
 class AccountConfigSettings(orm.TransientModel):
     _inherit = 'account.config.settings'
 
-    columns = {
+    _columns = {
         'tax_stamp_product_id': fields.related(
-        'company_id',' tax_stamp_product_id',
-        type='many2one', relation='product.product',
-        string="Tax Stamp Product",
-        help="Product used to model DatiBollo XML element on bills."
-    ),
+            'company_id',' tax_stamp_product_id',
+            type='many2one', relation='product.product',
+            string="Tax Stamp Product",
+            help="Product used to model DatiBollo XML element on bills."
+        )
     }
 
     def onchange_company_id(self, cr, uid, ids, company_id, context=None):
