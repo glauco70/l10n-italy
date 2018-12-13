@@ -511,9 +511,6 @@ class WizardExportFatturapa(orm.TransientModel):
         if not partner.city:
             raise orm.except_orm(
                 _('Error!'), _('Customer city not set.'))
-        # if not partner.province:
-        #     raise orm.except_orm(
-        #         _('Error!'), _('Customer province not set.'))
         if not partner.country_id:
             raise orm.except_orm(
                 _('Error!'), _('Customer country not set.'))
