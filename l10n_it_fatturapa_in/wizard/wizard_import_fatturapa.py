@@ -1078,7 +1078,7 @@ class WizardImportFatturapa(orm.TransientModel):
             delivery_id = self.getCarrirerPartner(
                 cr, uid, Delivery, context=context)
             delivery_dict = {
-                'carrier_id': delivery_id,
+                'carrier': delivery_id,
                 'transport_vehicle': Delivery.MezzoTrasporto or '',
                 'transport_reason': Delivery.CausaleTrasporto or '',
                 'number_items': Delivery.NumeroColli or 0,
