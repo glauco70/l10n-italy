@@ -118,15 +118,15 @@ class FatturaPAAttachmentOut(models.Model):
 
         regex = re.compile(RESPONSE_MAIL_REGEX)
         attachments = [x for x in message_dict['attachments']
-                       if regex.match(x.fname)]
+                       if regex.match(x[0])]
 
         for attachment in attachments:
-            response_name = attachment.fname
+            response_name = attachment[0]
             message_type = response_name.split('_')[2]
-            if attachment.fname.lower().endswith('.zip'):
+            if attachment[0].lower().endswith('.zip'):
                 # not implemented, case of AT, todo
                 continue
-            root = etree.fromstring(attachment.content)
+            root = etree.fromstring(attachment[1])
             file_name = root.find('NomeFile')
             fatturapa_attachment_out = False
 
@@ -151,6 +151,8 @@ class FatturaPAAttachmentOut(models.Model):
                         return message_dict
 
             if fatturapa_attachment_out:
+                fatturapa_attachment_out = self.browse(
+                    cr, uid, fatturapa_attachment_out, context=context)
                 id_sdi = root.find('IdentificativoSdI')
                 receipt_dt = root.find('DataOraRicezione')
                 message_id = root.find('MessageId')

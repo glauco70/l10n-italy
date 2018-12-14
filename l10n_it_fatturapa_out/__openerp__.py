@@ -18,6 +18,7 @@
     "depends": [
         'l10n_it_fatturapa',
         'l10n_it_split_payment',
+        'l10n_it_account_stamp',
         ],
     "data": [
         'wizard/wizard_export_fatturapa_view.xml',

@@ -42,10 +42,10 @@ class MailThread(models.AbstractModel):
 
             fatturapa_regex = re.compile(FATTURAPA_IN_REGEX)
             fatturapa_attachments = [x for x in message_dict['attachments']
-                                     if fatturapa_regex.match(x.fname)]
+                                     if fatturapa_regex.match(x[0])]
             response_regex = re.compile(RESPONSE_MAIL_REGEX)
             response_attachments = [x for x in message_dict['attachments']
-                                    if response_regex.match(x.fname)]
+                                    if response_regex.match(x[0])]
             if response_attachments and fatturapa_attachments:
                 # this is an electronic invoice
                 if len(response_attachments) > 1:
