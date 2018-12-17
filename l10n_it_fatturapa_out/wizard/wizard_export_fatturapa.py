@@ -736,7 +736,7 @@ class WizardExportFatturapa(orm.TransientModel):
                 if line.product_id.ean13:
                     CodiceArticolo = CodiceArticoloType(
                         CodiceTipo='EAN',
-                        CodiceValore=line.product_id.barcode
+                        CodiceValore=line.product_id.ean13
                     )
                     DettaglioLinea.CodiceArticolo.append(CodiceArticolo)
             line_no += 1
