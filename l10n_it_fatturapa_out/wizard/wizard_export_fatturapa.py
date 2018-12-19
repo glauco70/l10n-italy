@@ -24,7 +24,6 @@ import logging
 import phonenumbers
 from openerp.osv import orm
 from openerp.osv import fields
-from openerp.osv.orm import except_orm as UserError
 from openerp.addons.l10n_it_fatturapa.bindings.fatturapa_v_1_2 import (
     IdFiscaleType,
     ContattiTrasmittenteType,
@@ -137,7 +136,7 @@ class WizardExportFatturapa(orm.TransientModel):
                 'FatturaElettronicaHeader.DatiTrasmissione.'
                 'ProgressivoInvio:\n%s'
             ) % unicode(e)
-            raise _('Error!'), _(msg)
+            raise orm.except_orm(_('Error!'), _(msg))
         return number
 
     def _setIdTrasmittente(self, cr, uid, company, fatturapa, context=None):
@@ -698,7 +697,7 @@ class WizardExportFatturapa(orm.TransientModel):
             prezzo_unitario = self._get_prezzo_unitario(cr, uid, line)
             DettaglioLinea = DettaglioLineeType(
                 NumeroLinea=str(line_no),
-                Descrizione=line.name.replace('\n', ' '),
+                Descrizione=unidecode(line.name.replace('\n', ' ')),
                 PrezzoUnitario=('%.' + str(
                     price_precision
                 ) + 'f') % prezzo_unitario,
