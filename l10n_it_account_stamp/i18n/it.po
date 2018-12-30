@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-12 13:29+0000\n"
-"PO-Revision-Date: 2018-12-12 13:29+0000\n"
+"POT-Creation-Date: 2018-12-30 17:34+0000\n"
+"PO-Revision-Date: 2018-12-30 17:34+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,13 +16,26 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: l10n_it_account_stamp
+#: model:product.template,description_sale:l10n_it_account_stamp.l10n_it_account_stamp_2_euro_product_template
+msgid "\n"
+"Stamp duty payment under the terms of Art. 6, Subsection 2 of MEF Decree July\n"
+"17, 2014"
+msgstr "\n"
+"Marca da bollo da 2,00 euro. Assolvimento dell’imposta di bollo ai sensi \n"
+"dell’articolo 6, comma 2, del Dm 17 giugno 2014."
+
+#. module: l10n_it_account_stamp
 #: view:product.template:l10n_it_account_stamp.product_template_form_view_account_stamp
 msgid "Accounting"
 msgstr "Contabilità"
 
 #. module: l10n_it_account_stamp
 #: view:account.invoice:l10n_it_account_stamp.invoice_form_stamp
-#: view:account.invoice:l10n_it_account_stamp.invoice_supplier_form_stamp
+msgid "Add tax stamp line"
+msgstr "Aggiungi riga Marca da Bollo"
+
+#. module: l10n_it_account_stamp
+#: view:account.invoice:l10n_it_account_stamp.invoice_form_stamp
 msgid "CadetBlue:is_stamp_line==True;"
 msgstr "CadetBlue:is_stamp_line==True;"
 
@@ -33,7 +46,7 @@ msgstr "Aziende"
 
 #. module: l10n_it_account_stamp
 #: view:product.template:l10n_it_account_stamp.product_template_form_view_account_stamp
-msgid "For each invoice, the base amount for each selected tax code account will be added up and used to determine the application of the account stamp."
+msgid "For each invoice, the base amount for each selected tax will be added up and used to determine the application of the account stamp."
 msgstr "La base imponibile di ogni conto imposta individuato fra quelli sopra elencati verrà sommata e utilizzata, all'interno di ciascuna fattura, per determinare l'applicabilità della marca da bollo."
 
 #. module: l10n_it_account_stamp
@@ -47,16 +60,30 @@ msgid "Invoice Line"
 msgstr "Righe Fattura"
 
 #. module: l10n_it_account_stamp
-#: code:addons/l10n_it_account_stamp/models/invoice.py:51
+#: field:account.invoice.line,is_stamp_line:0
+#: field:product.template,is_stamp:0
+msgid "Is stamp"
+msgstr "È una Marca da Bollo"
+
+#. module: l10n_it_account_stamp
+#: code:addons/l10n_it_account_stamp/models/invoice.py:63
 #, python-format
 msgid "Missing account income/expense configuration for %s"
 msgstr "Configurazione conti costo/ricavo mancante per %s"
 
 #. module: l10n_it_account_stamp
-#: code:addons/l10n_it_account_stamp/models/invoice.py:25
+#: code:addons/l10n_it_account_stamp/models/invoice.py:19
+#: code:addons/l10n_it_account_stamp/models/invoice.py:53
+#: code:addons/l10n_it_account_stamp/models/invoice.py:136
 #, python-format
 msgid "Missing tax stamp product in company settings!"
 msgstr "Prodotto Marca da bollo mancante nella configurazione dell'azienda!"
+
+#. module: l10n_it_account_stamp
+#: code:addons/l10n_it_account_stamp/models/invoice.py:91
+#, python-format
+msgid "Product %s must have income and expense accounts"
+msgstr "Il prodotto %s deve avere i conti di ricavo e di costo"
 
 #. module: l10n_it_account_stamp
 #: model:ir.model,name:l10n_it_account_stamp.model_product_template
@@ -70,9 +97,36 @@ msgid "Product used as Tax Stamp in customer invoices."
 msgstr "Prodotto usato come Marca da Bollo nelle fatture clienti."
 
 #. module: l10n_it_account_stamp
+#: field:product.template,stamp_apply_min_total_base:0
+msgid "Stamp apply min total base"
+msgstr "Minima base imponibile Marca da Bollo"
+
+#. module: l10n_it_account_stamp
 #: field:product.template,stamp_apply_tax_ids:0
 msgid "Stamp taxes"
 msgstr "Imposte marca da bollo"
+
+#. module: l10n_it_account_stamp
+#: field:account.invoice,tax_stamp:0
+msgid "Tax Stamp"
+msgstr "Marca da Bollo"
+
+#. module: l10n_it_account_stamp
+#: model:product.template,name:l10n_it_account_stamp.l10n_it_account_stamp_2_euro_product_template
+msgid "Tax Stamp 2 euro"
+msgstr "Marca da Bollo da 2 euro"
+
+#. module: l10n_it_account_stamp
+#: code:addons/l10n_it_account_stamp/models/invoice.py:109
+#, python-format
+msgid "Tax Stamp Expense"
+msgstr "Costo Marca da Bollo"
+
+#. module: l10n_it_account_stamp
+#: code:addons/l10n_it_account_stamp/models/invoice.py:96
+#, python-format
+msgid "Tax Stamp Income"
+msgstr "Ricavo Marca da Bollo"
 
 #. module: l10n_it_account_stamp
 #: view:account.config.settings:l10n_it_account_stamp.view_account_config_settings
@@ -87,15 +141,22 @@ msgid "Tax stamp"
 msgstr "Marca da bollo"
 
 #. module: l10n_it_account_stamp
-#: code:addons/l10n_it_account_stamp/models/product.py:17
+#: code:addons/l10n_it_account_stamp/models/invoice.py:48
+#, python-format
+msgid "Tax stamp is not applicable"
+msgstr "Marca da Bollo non applicabile"
+
+#. module: l10n_it_account_stamp
+#: code:addons/l10n_it_account_stamp/models/invoice.py:57
+#, python-format
+msgid "Tax stamp line %s already present. Remove it first."
+msgstr "Riga Marca da Bollo %s già presente. Rimuoverla prima."
+
+#. module: l10n_it_account_stamp
+#: code:addons/l10n_it_account_stamp/models/product.py:16
 #, python-format
 msgid "The product %s must be a stamp to set apply taxes!"
 msgstr "Il prodotto deve essere una marca da bollo per poter impostare i conti imposta!"
-
-#. module: l10n_it_account_stamp
-#: view:product.template:l10n_it_account_stamp.product_template_form_view_account_stamp
-msgid "{'readonly': [('is_stamp', '=', True)]}"
-msgstr "{'readonly': [('is_stamp', '=', True)]}"
 
 #. module: l10n_it_account_stamp
 #: view:product.template:l10n_it_account_stamp.product_template_form_view_account_stamp
