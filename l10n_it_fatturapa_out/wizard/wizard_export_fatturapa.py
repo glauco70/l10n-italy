@@ -447,11 +447,7 @@ class WizardExportFatturapa(models.TransientModel):
                 _('Customer ZIP is not set.'))
         if not partner.city:
             raise UserError(
-<<<<<<< HEAD
-                _('Customer city not set.'))
-=======
                 _('Customer city is not set.'))
->>>>>>> 8.0_imp_fatturapa_total
         if not partner.country_id:
             raise UserError(
                 _('Customer country is not set.'))
