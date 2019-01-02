@@ -52,3 +52,24 @@ class AccountInvoice(models.Model):
                 'transportation_method_id'
                 ] = partner.transportation_method_id.id
         return result
+
+
+class AccountInvoiceLine(models.Model):
+
+    _inherit = 'account.invoice.line'
+
+    ddt_id = fields.Many2one(
+        'stock.picking.package.preparation', string='Ddt')
+
+
+class StockMove(models.Model):
+    _inherit = "stock.move"
+
+    def _get_invoice_line_vals(
+            self, cr, uid, move, partner, inv_type, context=None):
+        res = super(StockMove, self)._get_invoice_line_vals(
+            cr, uid, move, partner, inv_type, context=context
+        )
+        if move.package_ids:
+            res.update({'ddt_id': move.package_ids[0].id})
+        return res
