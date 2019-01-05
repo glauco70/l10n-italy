@@ -2,6 +2,7 @@
 
 import lxml.etree as ET
 import os
+import base64
 import shlex
 import subprocess
 import logging
@@ -79,20 +80,37 @@ class Attachment(models.Model):
         try:
             proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
             stdoutdata, stderrdata = proc.communicate()
-            if proc.wait() != 0:
-                _logger.warning(stdoutdata)
-                raise Exception(stderrdata)
+            # We need to primarily check if xml file exists,
+            # it's a workaround for a (likely) openssl bug (v.1.1.0x).
+            # The file is correctly decrypted but openssl gives an error
+            # in signature verification like the following one:
+            #
+            # Verification failure
+            # int_rsa_verify:bad signature
+            # PKCS7_signatureVerify:signature failure
+            # PKCS7_verify:signature failure
+            #
+            # Tested versions:
+            # 1.0.1t-1+deb8u8    - Debian 8     - OK
+            # 1.0.2g-1ubuntu4.14 - Ubuntu 16.04 - OK
+            # 1.1.0f-3+deb9u2    - Debian 9     - affected
+            # 1.1.0g-2ubuntu4.3  - Ubuntu 18.04 - affected
+            #
+            if not os.path.isfile(xml_file):
+                if proc.wait() != 0:
+                    _logger.warning(stdoutdata)
+                    raise Exception(stderrdata)
+                else:
+                    raise UserError(
+                        _(
+                            'Signed Xml file not decryptable.'
+                        )
+                    )
         except Exception as e:
             raise UserError(
                 _(
-                    'Signed Xml file %s'
+                    'Signed Xml file %s.'
                 ) % e.args
-            )
-        if not os.path.isfile(xml_file):
-            raise UserError(
-                _(
-                    'Signed Xml file not decryptable'
-                )
             )
         return xml_file
 
@@ -119,8 +137,10 @@ class Attachment(models.Model):
                 '/tmp/%s' % fatturapa_attachment.datas_fname.lower())
             temp_der_file_name = (
                 '/tmp/%s_tmp' % fatturapa_attachment.datas_fname.lower())
-            with open(temp_file_name, 'w') as p7m_file:
-                p7m_file.write(fatturapa_attachment.datas.decode('base64'))
+            with open(temp_file_name, 'wb') as p7m_file:
+                datas = fatturapa_attachment.datas
+                format_data = base64.decodebytes(datas)
+                p7m_file.write(format_data)
             xml_file_name = os.path.splitext(temp_file_name)[0]
 
             # check if temp_file_name is a PEM file
@@ -136,11 +156,11 @@ class Attachment(models.Model):
             xml_file_name = self.decrypt_to_xml(
                 temp_file_name, xml_file_name)
 
-            with open(xml_file_name, 'r') as fatt_file:
+            with open(xml_file_name, 'rb') as fatt_file:
                 file_content = fatt_file.read()
             xml_string = file_content
         elif fatturapa_attachment.datas_fname.lower().endswith('.xml'):
-            xml_string = fatturapa_attachment.datas.decode('base64')
+            xml_string = base64.decodebytes(fatturapa_attachment.datas)
         xml_string = self.remove_xades_sign(xml_string)
         xml_string = self.strip_xml_content(xml_string)
         return xml_string
