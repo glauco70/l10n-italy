@@ -78,6 +78,7 @@ class FatturaPACommon(TransactionCase):
             'l10n_it_fatturapa.res_partner_fatturapa_0')
         self.res_partner_fatturapa_2 = self.env.ref(
             'l10n_it_fatturapa.res_partner_fatturapa_2')
+        self.res_partner_fatturapa_2.is_pa = False
         self.intermediario = self.env.ref(
             'l10n_it_fatturapa.res_partner_fatturapa_1')
         self.stabile_organizzazione = self.env.ref(
