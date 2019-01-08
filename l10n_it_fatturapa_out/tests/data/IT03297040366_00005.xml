@@ -45,7 +45,7 @@
                 </IdFiscaleIVA>
                 <CodiceFiscale>00146089990</CodiceFiscale>
                 <Anagrafica>
-                    <Denominazione>Public Administration</Denominazione>
+                    <Denominazione>Pubblica Amministrazione</Denominazione>
                 </Anagrafica>
             </DatiAnagrafici>
             <Sede>
@@ -64,7 +64,7 @@
                 </IdFiscaleIVA>
                 <CodiceFiscale>03297040366</CodiceFiscale>
                 <Anagrafica>
-                    <Denominazione>Intermediary</Denominazione>
+                    <Denominazione>Intermediario</Denominazione>
                 </Anagrafica>
             </DatiAnagrafici>
         </TerzoIntermediarioOSoggettoEmittente>
