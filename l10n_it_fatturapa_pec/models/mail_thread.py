@@ -23,6 +23,23 @@ RESPONSE_MAIL_REGEX = '[A-Z]{2}[a-zA-Z0-9]{11,16}_[a-zA-Z0-9]{,5}_MT_' \
 class MailThread(models.AbstractModel):
     _inherit = 'mail.thread'
 
+    def create_message_attachments(self, message_dict):
+        ir_attachment_obj = self.env['ir.attachment']
+        attachment_ids = []
+        for name, content in message_dict['attachments']:
+            if isinstance(content, unicode):
+                content = content.encode('utf-8')
+            data_attach = {
+                'name': name,
+                'datas': base64.b64encode(str(content)),
+                'datas_fname': name,
+                'description': name,
+                'res_model': message_dict.get('model', False),
+                'res_id': message_dict.get('res_id', False),
+            }
+            attachment_ids.append(ir_attachment_obj.create(data_attach))
+        return attachment_ids
+
     def clean_message_dict(self, message_dict):
         del message_dict['attachments']
         del message_dict['cc']
@@ -45,7 +62,15 @@ class MailThread(models.AbstractModel):
                                      if fatturapa_regex.match(x.fname)]
             response_regex = re.compile(RESPONSE_MAIL_REGEX)
             response_attachments = [x for x in message_dict['attachments']
-                                    if response_regex.match(x.fname)]
+                                    if response_regex.match(x[0])]
+            # pass company_id in attachments creation
+            fetchmail_server = self.env['fetchmail.server'].browse(
+                self._context.get('fetchmail_server_id', False))
+            sdi_channel = self.env['sdi.channel'].search([
+                ('fetchmail_server_id', '=', fetchmail_server.id)
+            ])
+            company_id = sdi_channel.company_id if sdi_channel else \
+                self.env.user.company_id
             if response_attachments and fatturapa_attachments:
                 # this is an electronic invoice
                 if len(response_attachments) > 1:
@@ -55,8 +80,8 @@ class MailThread(models.AbstractModel):
                 message_dict['model'] = 'fatturapa.attachment.in'
                 message_dict['record_name'] = message_dict['subject']
                 message_dict['res_id'] = 0
-                attachment_ids = self._message_post_process_attachments(
-                    message_dict['attachments'], [], message_dict)
+                attachment_ids = self.with_context(company_id=company_id).\
+                    create_message_attachments(message_dict)
                 for attachment in self.env['ir.attachment'].browse(
                         [att_id for m, att_id in attachment_ids]):
                     if fatturapa_regex.match(attachment.name):
@@ -84,8 +109,8 @@ class MailThread(models.AbstractModel):
                     .parse_pec_response(message_dict)
 
                 message_dict['record_name'] = message_dict['subject']
-                attachment_ids = self._message_post_process_attachments(
-                    message_dict['attachments'], [], message_dict)
+                attachment_ids = self.with_context(company_id=company_id).\
+                    create_message_attachments(message_dict)
                 message_dict['attachment_ids'] = attachment_ids
                 self.clean_message_dict(message_dict)
 
