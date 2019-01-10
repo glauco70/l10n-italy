@@ -2,6 +2,7 @@
 # Copyright 2014 Davide Corio
 # Copyright 2015-2016 Lorenzo Battistini - Agile Business Group
 # Copyright 2018 Gianmarco Conte, Marco Calcagni - Dinamiche Aziendali srl
+# Copyright 2018 Sergio Corato
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
 
 import base64
@@ -499,11 +500,15 @@ class WizardExportFatturapa(models.TransientModel):
             for causale in caus_list:
                 if not causale:
                     continue
-                # Remove non latin chars, but go back to unicode string,
-                # as expected by String200LatinType
-                causale = causale.encode(
-                    'latin', 'ignore').decode('latin')
-                body.DatiGenerali.DatiGeneraliDocumento.Causale.append(causale)
+                causale_list_200 = \
+                    [causale[i:i+200] for i in range(0, len(causale), 200)]
+                for causale200 in causale_list_200:
+                    # Remove non latin chars, but go back to unicode string,
+                    # as expected by String200LatinType
+                    causale = causale200.encode(
+                        'latin', 'ignore').decode('latin')
+                    body.DatiGenerali.DatiGeneraliDocumento.Causale\
+                        .append(causale)
 
         if invoice.company_id.fatturapa_art73:
             body.DatiGenerali.DatiGeneraliDocumento.Art73 = 'SI'
@@ -595,7 +600,8 @@ class WizardExportFatturapa(models.TransientModel):
                 # see https://tinyurl.com/ycem923t
                 # and '&#10;' would not be correctly visualized anyway
                 # (for example firefox replaces '&#10;' with space
-                Descrizione=line.name.replace('\n', ' '),
+                Descrizione=line.name.replace('\n', ' ').encode(
+                    'latin', 'ignore').decode('latin'),
                 PrezzoUnitario=('%.' + str(
                     price_precision
                 ) + 'f') % prezzo_unitario,
@@ -658,7 +664,8 @@ class WizardExportFatturapa(models.TransientModel):
                 if not tax.law_reference:
                     raise UserError(
                         _("No 'law reference' field for tax %s") % tax.name)
-                riepilogo.RiferimentoNormativo = tax.law_reference
+                riepilogo.RiferimentoNormativo = tax.law_reference.encode(
+                    'latin', 'ignore').decode('latin')
             if tax.payability:
                 riepilogo.EsigibilitaIVA = tax.payability
             # TODO
