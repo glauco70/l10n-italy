@@ -477,9 +477,11 @@ class WizardExportFatturapa(models.TransientModel):
 
         TipoDocumento = invoice.fiscal_document_type_id.code
         if not TipoDocumento:
-            TipoDocumento = 'TD01'
-        if invoice.type == 'out_refund':
-            TipoDocumento = 'TD04'
+            if invoice.type == 'out_refund':
+                TipoDocumento = 'TD04'
+            else:
+                TipoDocumento = 'TD01'
+
         ImportoTotaleDocumento = invoice.amount_total
         if invoice.split_payment:
             ImportoTotaleDocumento += invoice.amount_sp
