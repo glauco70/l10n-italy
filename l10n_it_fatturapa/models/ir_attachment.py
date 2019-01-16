@@ -17,18 +17,18 @@ _logger = logging.getLogger(__name__)
 class Attachment(orm.Model):
     _inherit = 'ir.attachment'
 
-    def _compute_ftpa_preview_link(self, cr, uid, ids, context={}):
-        for att in self.browse(cr, uid, ids, context):
-            self.write(cr, uid, ids, {
-                'ftpa_preview_link': '/fatturapa/preview/%s' % att.id
-                })
+    def _compute_ftpa_preview_link(self, cr, uid, ids, name, args, context=None):
+        res = {}
+        for att in self.browse(cr, uid, ids, context=context):
+            res[att.id] = '/fatturapa/preview?attachment_id=%s' % att.id
+        return res
 
     _columns = {
-        'ftpa_preview_link': fields.char(
-            "Preview link", readonly=True, compute=_compute_ftpa_preview_link
+        'ftpa_preview_link': fields.function(
+            _compute_ftpa_preview_link, type='char',
+            string="Preview link", readonly=True,
         )
     }
-
 
     def check_file_is_pem(self, p7m_file):
         file_is_pem = True

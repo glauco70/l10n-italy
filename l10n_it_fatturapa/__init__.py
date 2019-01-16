@@ -21,3 +21,4 @@
 
 import models
 from . import bindings
+from . import controllers
