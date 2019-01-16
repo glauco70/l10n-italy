@@ -185,7 +185,7 @@
                     <field name="virtual_stamp" readonly="1"></field>
                     <field name="stamp_amount" readonly="1"></field>
                 </field>
-                
+
                 <field name="payment_ids" position="before">
                     <separator string="FatturaPA Payment"></separator>
                     <group>

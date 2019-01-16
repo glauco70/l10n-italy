@@ -952,9 +952,6 @@ class WizardImportFatturapa(orm.TransientModel):
         invoice_id = invoice_model.create(
             cr, uid, invoice_data, context=context)
 
-        self.add_dati_bollo(cr, uid, 
-            invoice_id, FatturaBody.DatiGenerali.DatiGeneraliDocumento)
-        
         invoice = invoice_model.browse(cr, uid, invoice_id, context=context)
         # 2.1.1.7
         Walfares = FatturaBody.DatiGenerali.\
@@ -1262,36 +1259,6 @@ class WizardImportFatturapa(orm.TransientModel):
                     }
                 )
         return self.pool['einvoice.line'].browse(cr, uid, einvoiceline)
-
-    def add_dati_bollo(self, cr, uid, invoice, DatiGeneraliDocumento, context={}):
-        # 2.1.1.6
-        Stamps = DatiGeneraliDocumento.DatiBollo
-        if Stamps:
-            invoice = self.pool['account.invoice'].browse(invoice)
-            invoice.virtual_stamp = Stamps.BolloVirtuale
-            invoice.stamp_amount = float(Stamps.ImportoBollo)
-            if self.e_invoice_detail_level == '2':
-                journal = self.get_purchase_journal(invoice.company_id)
-                credit_account_id = journal.default_credit_account_id.id
-                line_vals = {
-                    'invoice_id': invoice.id,
-                    'name': _(
-                        "Bollo assolto ai sensi del decreto MEF 17 giugno "
-                        "2014 (art. 6)"
-                    ),
-                    'account_id': credit_account_id,
-                    'price_unit': invoice.stamp_amount,
-                    'quantity': 1,
-                    }
-                if self.pool.user.company_id.dati_bollo_product_id:
-                    dati_bollo_product = (
-                        self.pool.user.company_id.dati_bollo_product_id)
-                    line_vals['product_id'] = dati_bollo_product.id
-                    line_vals['name'] = dati_bollo_product.name
-                    self.adjust_accounting_data(cr, uid,
-                        dati_bollo_product, line_vals, context
-                    )
-                self.pool['account.invoice.line'].create(cr, uid, line_vals)
 
     def check_CessionarioCommittente(
         self, cr, uid, company, FatturaElettronicaHeader, context=None
