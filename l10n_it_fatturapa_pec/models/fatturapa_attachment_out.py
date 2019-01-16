@@ -33,9 +33,10 @@ class FatturaPAAttachmentOut(orm.Model):
                 ('ready', 'Ready to Send'),
                 ('sent', 'Sent'),
                 ('sender_error', 'Sender Error'),
-                ('recipient_error', 'Recipient Error'),
+                ('recipient_error', 'Not delivered'),
                 ('rejected', 'Rejected (PA)'),
                 ('validated', 'Delivered'),
+                ('accepted', 'Accepted'),
             ], string='State'),
         'last_sdi_response': fields.text('Last Response from Exchange System',
                                          readonly=True),
@@ -97,6 +98,7 @@ class FatturaPAAttachmentOut(orm.Model):
                     cr, uid, mail_message_id, context=context).body,
                 'email_to': company.email_exchange_system,
                 'email_from': company.email_from_for_fatturaPA,
+                'reply_to': company.email_from_for_fatturaPA,
                 'mail_server_id': company.sdi_channel_id.pec_server_id.id,
             })
 
@@ -248,7 +250,7 @@ class FatturaPAAttachmentOut(orm.Model):
                     description = root.find('Descrizione')
                     if description is not None:
                         fatturapa_attachment_out.write({
-                            'state': 'validated',
+                            'state': 'accepted',
                             'last_sdi_response': (
                                 u'SdI ID: {}; '
                                 u'Message ID: {}; '

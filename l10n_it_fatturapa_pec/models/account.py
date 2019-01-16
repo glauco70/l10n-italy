@@ -13,7 +13,8 @@ class account_invoice(osv.osv):
             'sent': 'sent',
             'validated': 'delivered',
             'sender_error': 'error',
-            'recipient_error': 'error',
+            'recipient_error': 'accepted',
+            'accepted': 'accepted',
             'rejected': 'error'
         }
         res = {}
@@ -40,6 +41,7 @@ class account_invoice(osv.osv):
                 ('ready', 'Ready to Send'),
                 ('sent', 'Sent'),
                 ('delivered', 'Delivered'),
+                ('accepted', 'Accepted'),
                 ('error', 'Error'),
             ],
             store = {
