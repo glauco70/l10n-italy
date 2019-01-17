@@ -395,8 +395,18 @@ class WizardExportFatturapa(orm.TransientModel):
         fatturapa.FatturaElettronicaHeader.CessionarioCommittente.\
             DatiAnagrafici = DatiAnagraficiCessionarioType()
         if not partner.vat and not partner.fiscalcode:
-            raise orm.except_orm(
-                _('Error!'), _('Partner VAT and Fiscalcode not set.'))
+            if partner.codice_destinatario == 'XXXXXXX' \
+                    and partner.country_id.code:
+                # SDI accpets missing VAT# for foreign customers by setting a
+                # fake IdCodice and a valid IdPaese
+                # Otherwise raise error if we havo no VAT# and no Fiscal code
+                fatturapa.FatturaElettronicaHeader.CessionarioCommittente.\
+                    DatiAnagrafici.IdFiscaleIVA = IdFiscaleType(
+                        IdPaese=partner.country_id.code, IdCodice='99999999999'
+                    )
+            else:
+                raise orm.except_orm(
+                    _('Error!'), _('Partner VAT and Fiscalcode not set.'))
         if partner.fiscalcode:
             fatturapa.FatturaElettronicaHeader.CessionarioCommittente.\
                 DatiAnagrafici.CodiceFiscale = partner.fiscalcode
@@ -504,9 +514,6 @@ class WizardExportFatturapa(orm.TransientModel):
         if not partner.street:
             raise orm.except_orm(
                 _('Error!'), _('Customer street not set.'))
-        if not partner.zip:
-            raise orm.except_orm(
-                _('Error!'), _('Customer ZIP not set.'))
         if not partner.city:
             raise orm.except_orm(
                 _('Error!'), _('Customer city not set.'))
@@ -514,16 +521,28 @@ class WizardExportFatturapa(orm.TransientModel):
             raise orm.except_orm(
                 _('Error!'), _('Customer country not set.'))
 
-        # FIXME: manage address number in <NumeroCivico>
-        fatturapa.FatturaElettronicaHeader.CessionarioCommittente.Sede = (
-            IndirizzoType(
-                Indirizzo=partner.street,
-                CAP=partner.zip,
-                Comune=partner.city,
-                Nazione=partner.country_id.code))
-        if partner.province:
-            fatturapa.FatturaElettronicaHeader.CessionarioCommittente.Sede.\
-                Provincia=partner.province.code
+        # TODO: manage address number in <NumeroCivico>
+        if partner.codice_destinatario == 'XXXXXXX':
+            fatturapa.FatturaElettronicaHeader.CessionarioCommittente.Sede = (
+                IndirizzoType(
+                    Indirizzo=partner.street,
+                    CAP='00000',
+                    Comune=partner.city,
+                    Provincia='EE',
+                    Nazione=partner.country_id.code))
+        else:
+            if not partner.zip:
+                raise UserError(
+                    _('Customer ZIP not set.'))
+            fatturapa.FatturaElettronicaHeader.CessionarioCommittente.Sede = (
+                IndirizzoType(
+                    Indirizzo=partner.street,
+                    CAP=partner.zip,
+                    Comune=partner.city,
+                    Nazione=partner.country_id.code))
+            if partner.province:
+                fatturapa.FatturaElettronicaHeader.CessionarioCommittente.\
+                    Sede.Provincia = partner.province.code
 
         return True
 
