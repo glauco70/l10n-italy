@@ -911,6 +911,7 @@ class WizardExportFatturapa(models.TransientModel):
                 'type': 'binary'
             }
             attachment = attachment_model.create(data_attach)
+
         inv.write({
             'fatturapa_doc_attachments': [(0, 0, {
                 'is_pdf_invoice_print': True,
