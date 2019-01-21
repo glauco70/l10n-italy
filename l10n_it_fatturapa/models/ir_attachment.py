@@ -5,6 +5,7 @@ import os
 import shlex
 import subprocess
 import logging
+import base64
 from io import BytesIO
 from openerp.osv import fields, orm
 from openerp.modules.module import get_module_resource
@@ -116,6 +117,12 @@ class Attachment(orm.Model):
                 elem.text = elem.text.strip()
         return ET.tostring(root)
 
+    def isBase64(self, s):
+        try:
+            return base64.b64encode(base64.b64decode(s)) == s
+        except Exception:
+            return False
+
     def get_xml_string(self, cr, uid, ids, context={}):
         fatturapa_attachment = self.browse(cr, uid, [ids], context)[0]
         # decrypt  p7m file
@@ -125,7 +132,10 @@ class Attachment(orm.Model):
             temp_der_file_name = (
                 '/tmp/%s_tmp' % fatturapa_attachment.datas_fname.lower())
             with open(temp_file_name, 'w') as p7m_file:
-                p7m_file.write(fatturapa_attachment.datas.decode('base64'))
+                txt = fatturapa_attachment.datas.decode('base64')
+                if self.isBase64(txt):
+                    txt = base64.b64decode(txt)
+                p7m_file.write(txt)
             xml_file_name = os.path.splitext(temp_file_name)[0]
 
             # check if temp_file_name is a PEM file
