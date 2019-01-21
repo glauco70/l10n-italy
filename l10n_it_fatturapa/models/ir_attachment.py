@@ -134,12 +134,11 @@ class Attachment(orm.Model):
         xml_string = self.strip_xml_content(xml_string)
         return xml_string
 
-    def get_fattura_elettronica_preview(self):
+    def get_fattura_elettronica_preview(self, cr, uid, ids, context=None):
         xsl_path = get_module_resource(
             'l10n_it_fatturapa', 'data', 'fatturaordinaria_v1.2.1.xsl')
         xslt = ET.parse(xsl_path)
-        xml_string = self.get_xml_string(
-            self._cr, self._uid, self._ids, self._context)
+        xml_string = self.get_xml_string(cr, uid, ids[0], context)
         xml_file = BytesIO(xml_string)
         dom = ET.parse(xml_file)
         transform = ET.XSLT(xslt)
