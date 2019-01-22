@@ -17,18 +17,18 @@ _logger = logging.getLogger(__name__)
 class Attachment(orm.Model):
     _inherit = 'ir.attachment'
 
-    def _compute_ftpa_preview_link(self, cr, uid, ids, context={}):
-        for att in self.browse(cr, uid, ids, context):
-            self.write(cr, uid, ids, {
-                'ftpa_preview_link': '/fatturapa/preview/%s' % att.id
-                })
+    def _compute_ftpa_preview_link(self, cr, uid, ids, name, args, context=None):
+        res = {}
+        for att in self.browse(cr, uid, ids, context=context):
+            res[att.id] = '/fatturapa/preview?attachment_id=%s' % att.id
+        return res
 
     _columns = {
-        'ftpa_preview_link': fields.char(
-            "Preview link", readonly=True, compute=_compute_ftpa_preview_link
+        'ftpa_preview_link': fields.function(
+            _compute_ftpa_preview_link, type='char',
+            string="Preview link", readonly=True,
         )
     }
-
 
     def check_file_is_pem(self, p7m_file):
         file_is_pem = True
@@ -134,12 +134,11 @@ class Attachment(orm.Model):
         xml_string = self.strip_xml_content(xml_string)
         return xml_string
 
-    def get_fattura_elettronica_preview(self):
+    def get_fattura_elettronica_preview(self, cr, uid, ids, context=None):
         xsl_path = get_module_resource(
             'l10n_it_fatturapa', 'data', 'fatturaordinaria_v1.2.1.xsl')
         xslt = ET.parse(xsl_path)
-        xml_string = self.get_xml_string(
-            self._cr, self._uid, self._ids, self._context)
+        xml_string = self.get_xml_string(cr, uid, ids[0], context)
         xml_file = BytesIO(xml_string)
         dom = ET.parse(xml_file)
         transform = ET.XSLT(xslt)
