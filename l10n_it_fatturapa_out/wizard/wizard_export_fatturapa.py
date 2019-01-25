@@ -669,6 +669,12 @@ class WizardExportFatturapa(orm.TransientModel):
                 1 + line.invoice_line_tax_id[0].amount)
         return res
 
+    def _get_regular_invoice_lines(self, invoice):
+        return invoice.invoice_line
+
+    def _get_regular_invoice_tax_lines(self, invoice):
+        return invoice.tax_line
+
     def setDettaglioLinee(self, cr, uid, invoice, body, context=None):
         if context is None:
             context = {}
@@ -683,7 +689,7 @@ class WizardExportFatturapa(orm.TransientModel):
             'Product Price')
         uom_precision = self.pool['decimal.precision'].precision_get(cr, uid, 
             'Product Unit of Measure')
-        for line in invoice.invoice_line:
+        for line in self._get_regular_invoice_lines(invoice):
             if not line.invoice_line_tax_id:
                 raise orm.except_orm(
                     _('Error'),
@@ -748,7 +754,7 @@ class WizardExportFatturapa(orm.TransientModel):
         if context is None:
             context = {}
         tax_pool = self.pool['account.tax']
-        for tax_line in invoice.tax_line:
+        for tax_line in self._get_regular_invoice_tax_lines(invoice):
             tax_id = self.pool['account.tax'].get_tax_by_invoice_tax(
                 cr, uid, tax_line.name, context=context)
             tax = tax_pool.browse(cr, uid, tax_id, context=context)
