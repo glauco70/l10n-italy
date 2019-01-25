@@ -120,3 +120,15 @@ class res_partner(orm.Model):
             'firstname', 'customer', 'street', 'zip', 'city',
             'country_id']),
     ]
+
+    def onchange_country_id_e_inv(self, cr, uid, ids, country_id,
+                                  codice_destinatario, context=None):
+        res = {'value': {}}
+        if country_id and codice_destinatario:
+            if self.pool['res.country'].browse(
+                    cr, uid, country_id, context).code == 'IT' \
+                    and codice_destinatario == 'XXXXXXX':
+                res = {'value': {'codice_destinatario': '0000000'}}
+            else:
+                res = {'value': {'codice_destinatario': 'XXXXXXX'}}
+        return res
