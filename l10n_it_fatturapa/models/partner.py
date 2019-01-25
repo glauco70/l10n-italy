@@ -68,57 +68,49 @@ class res_partner(orm.Model):
 
     def _check_ftpa_partner_data(self, cr, uid, ids, context={}):
         for partner in self.browse(cr, uid, ids):
-            if partner.electronic_invoice_subjected:
+            if partner.electronic_invoice_subjected and partner.customer:
                 if partner.is_pa and (
-                    not partner.ipa_code or len(partner.ipa_code) != 6
-                ):
-                    raise except_osv(_('Error' ),
-                             _(
+                        not partner.ipa_code or len(partner.ipa_code) != 6):
+                    raise except_osv(_('Error'), _(
                         "Il partner %s, essendo una pubblica amministrazione "
                         "deve avere il codice IPA lungo 6 caratteri"
                     ) % partner.name)
                 if not partner.is_company and (
-                    not partner.lastname or not partner.firstname
-                ):
-                    raise except_osv(_('Error' ),_(
+                        not partner.lastname or not partner.firstname):
+                    raise except_osv(_('Error'), _(
                         "Il partner %s, essendo persona "
                         "deve avere Nome e Cognome"
                     ) % partner.name)
-                if not partner.is_pa and (
-                    not partner.codice_destinatario or
-                    len(partner.codice_destinatario) != 7
-                ):
-                    raise except_osv(_('Error' ),_(
+                if not partner.country_id:
+                    raise except_osv(_('Error'), _(
+                        'Customer %s: country is needed for XML'
+                        ' generation.'
+                    ) % partner.name)
+                if not partner.is_pa and len(partner.codice_destinatario) != 7:
+                    raise except_osv(_('Error'), _(
                         "Il partner %s "
                         "deve avere il Codice Destinatario lungo 7 caratteri"
                     ) % partner.name)
                 if (
-                    not partner.is_pa and
-                    partner.codice_destinatario == '0000000'
+                    not partner.vat and not partner.fiscalcode and
+                    partner.country_id.code == 'IT'
                 ):
-                    if not partner.vat and not partner.fiscalcode:
-                        raise except_osv(_('Error' ),_(
-                            "Il partner %s, con Codice Destinatario '0000000',"
-                            " deve avere o P.IVA o codice fiscale"
-                        ) % partner.name)
-                if partner.customer:
-                    if not partner.street:
-                        raise except_osv(_('Error' ),_(
-                            'Customer %s: street is needed for XML generation.'
-                        ) % partner.name)
-                    if not partner.zip:
-                        raise except_osv(_('Error' ),_(
-                            'Customer %s: ZIP is needed for XML generation.'
-                        ) % partner.name)
-                    if not partner.city:
-                        raise except_osv(_('Error' ),_(
-                            'Customer %s: city is needed for XML generation.'
-                        ) % partner.name)
-                    if not partner.country_id:
-                        raise except_osv(_('Error' ),_(
-                            'Customer %s: country is needed for XML'
-                            ' generation.'
-                        ) % partner.name)
+                    raise except_osv(_('Error'), _(
+                        "Il partner %s, con Codice Destinatario '0000000',"
+                        " deve avere o P.IVA o codice fiscale"
+                    ) % partner.name)
+                if not partner.street:
+                    raise except_osv(_('Error'), _(
+                        'Customer %s: street is needed for XML generation.'
+                    ) % partner.name)
+                if not partner.zip and partner.country_id.code == 'IT':
+                    raise except_osv(_('Error'), _(
+                        'Customer %s: ZIP is needed for XML generation.'
+                    ) % partner.name)
+                if not partner.city:
+                    raise except_osv(_('Error'), _(
+                        'Customer %s: city is needed for XML generation.'
+                    ) % partner.name)
         return True
 
     _constraints = [
@@ -128,4 +120,3 @@ class res_partner(orm.Model):
             'firstname', 'customer', 'street', 'zip', 'city',
             'country_id']),
     ]
-
