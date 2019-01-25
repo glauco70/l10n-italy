@@ -20,7 +20,7 @@ class AccountConfigSettings(osv.TransientModel):
 
     _columns = {
         'sconto_maggiorazione_product_id': fields.related(
-            'company_id', 'cassa_previdenziale_product_id', type='many2one',
+            'company_id', 'sconto_maggiorazione_product_id', type='many2one',
             relation='product.product', string='Product for Sconto Maggiorazione',
             help='Prodotto da utilizzare nelle fatture passive quando nell\'XML '
              'viene valorizzato l\'elemento ScontoMaggiorazione'),
