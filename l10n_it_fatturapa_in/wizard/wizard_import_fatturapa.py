@@ -241,8 +241,9 @@ class WizardImportFatturapa(orm.TransientModel):
                 prov_ids = self.ProvinceByCode(
                     cr, uid, ProvinciaAlbo, context=context)
                 if not prov_ids:
-                    raise orm.except_orm(
-                        _('Error !'),
+                    if context.get('inconsistencies'):
+                        context['inconsistencies'] += '\n'
+                    context['inconsistencies'] += (
                         _('ProvinciaAlbo ( %s ) not present in system') %
                         ProvinciaAlbo
                         )
@@ -285,8 +286,9 @@ class WizardImportFatturapa(orm.TransientModel):
                 office_ids = self.ProvinceByCode(
                     cr, uid, REA.Ufficio, context=context)
                 if not office_ids:
-                    raise orm.except_orm(
-                        _('Error !'),
+                    if context.get('inconsistencies'):
+                        context['inconsistencies'] += '\n'
+                    context['inconsistencies'] += (
                         _('REA Office Code ( %s ) not present in system') %
                         REA.Ufficio
                         )
@@ -342,14 +344,16 @@ class WizardImportFatturapa(orm.TransientModel):
                     ('amount', '=', 0.0),
                 ], context=context)
             if not account_tax_ids:
-                raise orm.except_orm(
-                    _('Error!'),
+                if context.get('inconsistencies'):
+                    context['inconsistencies'] += '\n'
+                context['inconsistencies'] += (
                     _('No tax with percentage '
                       '%s and nature %s found')
                     % (line.AliquotaIVA, line.Natura))
             if len(account_tax_ids) > 1:
-                raise orm.except_orm(
-                    _('Error!'),
+                if context.get('inconsistencies'):
+                    context['inconsistencies'] += '\n'
+                context['inconsistencies'] += (
                     _('Too many taxes with percentage '
                       '%s and nature %s found')
                     % (line.AliquotaIVA, line.Natura))
