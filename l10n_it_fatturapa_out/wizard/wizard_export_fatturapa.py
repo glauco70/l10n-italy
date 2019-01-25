@@ -532,8 +532,8 @@ class WizardExportFatturapa(orm.TransientModel):
                     Nazione=partner.country_id.code))
         else:
             if not partner.zip:
-                raise UserError(
-                    _('Customer ZIP not set.'))
+                raise orm.except_orm(
+                    _('Error!'), _('Customer ZIP not set.'))
             fatturapa.FatturaElettronicaHeader.CessionarioCommittente.Sede = (
                 IndirizzoType(
                     Indirizzo=partner.street,
