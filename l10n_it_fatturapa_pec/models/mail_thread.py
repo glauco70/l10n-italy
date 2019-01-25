@@ -167,6 +167,20 @@ class MailThread(orm.AbstractModel):
         decoded = base64.b64decode(attachment.datas)
         fatturapa_regex = re.compile(FATTURAPA_IN_REGEX)
         fatturapa_attachment_in = self.pool.get('fatturapa.attachment.in')
+        fetchmail_server_id = self.env.context.get('fetchmail_server_id')
+
+        company_id = False
+        e_invoice_user_id = uid
+        if fetchmail_server_id:
+            sdi_chan_id = self.pool.get('sdi.channel').search(cr, uid, [
+                ('fetch_pec_server_id', '=', fetchmail_server_id)], limit=1)
+            if sdi_chan_id:
+                sdi_chan = self.pool.get('sdi.channel').browse(cr, uid,
+                                                               sdi_chan_id, context)
+                # See check_fetch_pec_server_id
+                company_id = sdi_chan.company_id.id
+                e_invoice_user_id = sdi_chan.company_id.e_invoice_user_id.id
+
         if attachment.file_type == 'application/zip':
             with zipfile.ZipFile(io.BytesIO(decoded)) as zf:
                 for file_name in zf.namelist():
@@ -175,7 +189,7 @@ class MailThread(orm.AbstractModel):
                         # check if this invoice is already
                         # in other fatturapa.attachment.in
                         fatturapa_attachment_ids = fatturapa_attachment_in.\
-                            search(cr, uid, [('name', '=', file_name)],
+                            search(cr, e_invoice_user_id, [('name', '=', file_name)],
                             context=context)
                         if fatturapa_attachment_ids:
                             _logger.info("In invoice %s already processed"
@@ -185,16 +199,20 @@ class MailThread(orm.AbstractModel):
                                     'name': file_name,
                                     'datas_fname': file_name,
                                     'datas': base64.encodestring(
-                                        inv_file.read())
+                                        inv_file.read()),
+                                    'company_id': company_id,
                                 })
         else:
             fatturapa_attachment_ids = fatturapa_attachment_in.search(
-                cr, uid, [('name', '=', attachment.name)],
+                cr, e_invoice_user_id, [('name', '=', attachment.name)],
                     context=context)
             if fatturapa_attachment_ids:
                 _logger.info("Invoice xml already processed in %s" %
                              attachment.name)
             else:
                 fatturapa_attachment_in.create(
-                    cr, uid, {'ir_attachment_id': attachment.id},
+                    cr, e_invoice_user_id, {
+                        'ir_attachment_id': attachment.id,
+                        'company_id': company_id,
+                    },
                     context=context)

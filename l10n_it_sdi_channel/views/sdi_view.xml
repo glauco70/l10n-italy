@@ -5,7 +5,7 @@
             <field name="model">sdi.channel</field>
             <field name="name">view_sdi_channel_tree</field>
             <field name="arch" type="xml">
-                <tree string="SdI Channel">
+                <tree string="ES Channel">
                     <field name="name"/>
                     <field name="channel_type"/>
                     <field name="pec_server_id" attrs="{'invisible': [('channel_type', '!=', 'pec')]}"/>
@@ -22,7 +22,7 @@
             <field name="model">sdi.channel</field>
             <field name="name">view_sdi_channel_form</field>
             <field name="arch" type="xml">
-                <form string="SdI Channel">
+                <form string="ES Channel">
                     <group>
                         <group>
                             <field name="name"/>
@@ -33,6 +33,7 @@
                         <group attrs="{'invisible': [('channel_type', '!=', 'pec')]}">
                             <field name="pec_server_id" context="{'default_is_fatturapa_pec': True}"/>
                             <field name="email_exchange_system"/>
+                            <field name="fetch_pec_server_id" context="{'default_is_fatturapa_pec': True}" />
                         </group>
                         <!--<group attrs="{'invisible': [('channel_type', '!=', 'web')]}">-->
                             <!--<field name="web_server_address"/>-->

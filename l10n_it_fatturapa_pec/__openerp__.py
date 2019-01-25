@@ -14,7 +14,7 @@
 #
 ##############################################################################
 {
-    'name': 'Italian Localization - FatturaPA - Emission - PEC Support',
+    'name': 'Italian Localization - Fattura elettronica - Supporto PEC',
     'version': '7.0.1.2.0',
     'category': 'Localization/Italy',
     'summary': 'Send electronic invoices via PEC',
@@ -52,6 +52,7 @@ mailbox.
     'data': [
         'security/ir.model.access.csv',
         'views/account.xml',
+        'views/company_view.xml',
         'views/fatturapa_attachment_out.xml',
         'wizard/send_pec_view.xml',
         'views/fetchmail_view.xml',

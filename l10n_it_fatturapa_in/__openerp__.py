@@ -19,8 +19,8 @@
 #
 ##############################################################################
 {
-    'name': 'Italian Localization - FatturaPA reception',
-    'version': '0.1',
+    'name': 'Italian Localization - Fattura elettronica - Ricezione',
+    'version': '1.1',
     'category': 'Localization/Italy',
     'summary': 'Electronic invoices reception',
     'author': 'Agile Business Group, Innoviu, '
@@ -91,6 +91,7 @@ To contribute to this module, please visit http://odoo-community.org.
         'wizard/wizard_import_fatturapa_view.xml',
         'wizard/link_to_existing_invoice.xml',
         'security/ir.model.access.csv',
+        'security/rules.xml'
     ],
     "installable": True
 }

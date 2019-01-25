@@ -31,10 +31,15 @@ class SdiChannelPEC(orm.Model):
 
     def _check_pec_server_id(self, cr, uid, ids, context=None):
         for channel in self.browse(cr, uid, ids, context):
-            domain = [('pec_server_id', '=', channel.pec_server_id.id)]
+            domain = [
+                '|',
+                ('pec_server_id', '=', channel.pec_server_id.id),
+                ('fetch_pec_server_id', '=', channel.fetch_pec_server_id.id),
+            ]
             channel_ids = self.search(cr, uid, domain, context=context)
             if len(channel_ids) > 1:
                 return False
+
         return True
 
     def _check_email_validity(self, cr, uid, ids, context=None):
@@ -50,11 +55,14 @@ class SdiChannelPEC(orm.Model):
         'pec_server_id': fields.many2one('ir.mail_server', string='Pec mail server', required=False,
             domain=[('is_fatturapa_pec', '=', True)]),
         'email_exchange_system': fields.char('Exchange System Email Address', size=250),
+        'fetch_pec_server_id': fields.many2one('fetchmail.server', string='Incoming PEC server', required=False,
+            domain=[('is_fatturapa_pec', '=', True)]),
     }
 
     _constraints = [
-        (_check_pec_server_id, _("The channel %s with pec server %s already exists"), ['pec_server_id']),
-        (_check_email_validity, _("Email %s is not valid"), ['email_exchange_system']),
+        (_check_pec_server_id, _("The channel %s with pec server %s already exists"),
+            ['pec_server_id', 'fetch_pec_server_id']),
+        (_check_email_validity, _("Email is not valid"), ['email_exchange_system']),
     ]
 
 

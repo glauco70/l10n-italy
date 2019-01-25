@@ -13,8 +13,8 @@
 #
 ##############################################################################
 {
-    "name": "SdI channel",
-    "summary": "Add channel to send-receice xml files to SdI.",
+    "name": "Italian Localization - Fattura elettronica - Canale SdI",
+    "summary": "Aggiunge il canale di invio/ricezione dei file XML",
     "version": "7.0.1.1.0",
     "development_status": "Beta",
     "category": "Hidden",

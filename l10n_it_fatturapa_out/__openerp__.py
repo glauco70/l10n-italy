@@ -20,7 +20,7 @@
 ##############################################################################
 {
     'name': 'Italian Localization - FatturaPA - Emission',
-    'version': '7.0.0.1.1',
+    'version': '7.0.3.1.0',
     'category': 'Localization/Italy',
     'summary': 'Electronic invoices emission',
     'author': 'Davide Corio, Agile Business Group, Innoviu, '
@@ -91,6 +91,7 @@ To contribute to this module, please visit http://odoo-community.org.
         'views/attachment_view.xml',
         'views/account_view.xml',
         'security/ir.model.access.csv',
+        'security/rules.xml',
     ],
     "installable": True,
     'external_dependencies': {
