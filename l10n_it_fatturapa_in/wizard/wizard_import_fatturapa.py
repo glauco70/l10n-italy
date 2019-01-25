@@ -152,8 +152,8 @@ class WizardImportFatturapa(orm.TransientModel):
         if not partner_ids and cf:
             partner_ids = partner_model.search(
                 cr, uid, [('fiscalcode', '=', cf)], context=context)
+        commercial_partner = False
         if len(partner_ids) > 1:
-            commercial_partner = False
             for partner in partner_model.browse(
                 cr, uid, partner_ids, context=context
             ):
@@ -186,7 +186,8 @@ class WizardImportFatturapa(orm.TransientModel):
                     ],
                     context=context)
         if partner_ids:
-            commercial_partner = partner_ids[0]
+            if not commercial_partner:
+                commercial_partner = partner_ids[0]
             self.check_partner_base_data(
                 cr, uid, commercial_partner, DatiAnagrafici, context=context)
             return commercial_partner
@@ -230,12 +231,20 @@ class WizardImportFatturapa(orm.TransientModel):
         fiscalPosModel = self.pool['fatturapa.fiscal_position']
         vals = {}
         if partner_id:
-            vals = {
-                'street': cedPrest.Sede.Indirizzo,
-                'zip': cedPrest.Sede.CAP,
-                'city': cedPrest.Sede.Comune,
-                'register': cedPrest.DatiAnagrafici.AlboProfessionale or ''
-            }
+            if cedPrest.StabileOrganizzazione:
+                vals = {
+                    'street': cedPrest.StabileOrganizzazione.Indirizzo,
+                    'zip': cedPrest.StabileOrganizzazione.CAP,
+                    'city': cedPrest.StabileOrganizzazione.Comune,
+                    'register': cedPrest.DatiAnagrafici.AlboProfessionale or ''
+                }
+            else:
+                vals = {
+                    'street': cedPrest.Sede.Indirizzo,
+                    'zip': cedPrest.Sede.CAP,
+                    'city': cedPrest.Sede.Comune,
+                    'register': cedPrest.DatiAnagrafici.AlboProfessionale or ''
+                }
             if cedPrest.DatiAnagrafici.ProvinciaAlbo:
                 ProvinciaAlbo = cedPrest.DatiAnagrafici.ProvinciaAlbo
                 prov_ids = self.ProvinceByCode(
