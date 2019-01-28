@@ -207,7 +207,8 @@ class MailThread(models.AbstractModel):
             if sdi_chan:
                 # See check_fetch_pec_server_id
                 company_id = sdi_chan.company_id.id
-                e_invoice_user_id = sdi_chan.company_id.e_invoice_user_id.id
+                e_invoice_user_id = sdi_chan.sudo(
+                    ).company_id.e_invoice_user_id.id
         if e_invoice_user_id:
             fatturapa_attachment_in = fatturapa_attachment_in.sudo(
                 e_invoice_user_id)
