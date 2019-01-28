@@ -20,7 +20,7 @@ class AccountConfigSettings(orm.TransientModel):
 
     _columns = {
         'tax_stamp_product_id': fields.related(
-            'company_id',' tax_stamp_product_id',
+            'company_id', 'tax_stamp_product_id',
             type='many2one', relation='product.product',
             string="Tax Stamp Product",
             help="Product used to model DatiBollo XML element on bills."

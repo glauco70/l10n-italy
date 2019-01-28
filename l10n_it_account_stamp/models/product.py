@@ -17,10 +17,19 @@ class product_template(Model):
     _inherit = 'product.template'
 
     def _check_stamp_apply_tax(self, cr, uid, ids, context=None):
-        for obj in self.browse(cr, uid, ids, context):
-            if obj.stamp_apply_tax_code_ids and not obj.is_stamp:
+        for template in self.browse(cr, uid, ids, context):
+            if template.stamp_apply_tax_ids and not template.is_stamp:
                 return False
         return True
+
+    def _check_stamp_apply_taxes(self, cr, uid, ids, context=None):
+        for template in self.browse(cr, uid, ids, context):
+            for tax in template.stamp_apply_tax_ids:
+                if not tax.base_code_id:
+                    return False
+        return True
+
+
 
     _columns = {
         'stamp_apply_tax_ids': fields.many2many(
@@ -33,8 +42,14 @@ class product_template(Model):
         'is_stamp': fields.boolean('Is stamp'),
     }
 
-    _constraints = [(
+    _constraints = [
+        (
         _check_stamp_apply_tax,
         'The product must be a stamp to set apply taxes!',
         ['stamp_apply_tax_ids', 'is_stamp']
-    )]
+        ),
+        (_check_stamp_apply_taxes,
+         'The product taxes must have a base code!',
+         ['stamp_apply_tax_ids', 'is_stamp']
+         )
+    ]
