@@ -100,6 +100,8 @@ class account_invoice(Model):
             return False
 
     def add_tax_stamp_line(self, cr, uid, ids, context=None):
+        if isinstance(ids, (int, long)):
+            ids = [ids]
         for inv in self.browse(cr, uid, ids, context):
             if not inv.tax_stamp:
                 raise openerp.exceptions.Warning(_("Tax stamp is not applicable"))
