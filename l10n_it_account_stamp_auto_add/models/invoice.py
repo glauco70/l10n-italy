@@ -15,7 +15,11 @@ class account_invoice(Model):
     def button_reset_taxes(self, cr, uid, ids, context=None):
         if context is None:
             context = {}
+        line_obj = self.pool.get('account.invoice.line')
         for invoice in self.browse(cr, uid, ids, context):
+            stamp_line_id = self.is_tax_stamp_line_present(cr, uid, invoice, context=context)
+            if stamp_line_id:
+                line_obj.unlink(cr, uid, stamp_line_id, context)
             if not invoice.tax_stamp:
                 continue
             if invoice.type in ('out_invoice',  'out_refund'):

@@ -74,7 +74,7 @@ class account_invoice(Model):
     def is_tax_stamp_line_present(self, cr, uid, invoice, context=None):
         for l in invoice.invoice_line:
             if l.is_stamp_line:
-                return True
+                return l.id
         return False
 
     def is_tax_stamp_applicable(self, cr, uid, invoice, context=None):
@@ -106,10 +106,11 @@ class account_invoice(Model):
             if not inv.tax_stamp:
                 raise openerp.exceptions.Warning(_("Tax stamp is not applicable"))
             stamp_product_id = self._get_stamp_product(cr, uid, inv, context=context)
-            if self.is_tax_stamp_line_present(cr, uid, inv, context=context):
+            stamp_line_id = self.is_tax_stamp_line_present(cr, uid, inv, context=context)
+            if stamp_line_id:
                     raise openerp.exceptions.Warning(_(
                         "Tax stamp line %s already present. Remove it first."
-                    ) % l.name)
+                    ) % self.pool.get('account.invoice.line').browse(cr, uid, stamp_line_id, context).name)
             stamp_account = stamp_product_id.property_account_income
             if not stamp_account:
                 raise openerp.exceptions.Warning(
