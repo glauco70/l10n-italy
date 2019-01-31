@@ -1195,27 +1195,9 @@ class WizardImportFatturapa(orm.TransientModel):
                 )
         # 2.5
         AttachmentsData = FatturaBody.Allegati
-        if AttachmentsData:
-            AttachModel = self.pool['fatturapa.attachments']
-            for attach in AttachmentsData:
-                if not attach.NomeAttachment:
-                    raise orm.except_orm(
-                        _('Error!'),
-                        _('Attachment Name is Required')
-                    )
-                content = attach.Attachment
-                name = attach.NomeAttachment
-                _attach_dict = {
-                    'name': name,
-                    'datas': base64.b64encode(str(content)),
-                    'datas_fname': name,
-                    'description': attach.DescrizioneAttachment or '',
-                    'compression': attach.AlgoritmoCompressione or '',
-                    'format': attach.FormatoAttachment or '',
-                    'invoice_id': invoice_id,
-                }
-                AttachModel.create(
-                    cr, uid, _attach_dict, context=context)
+        if AttachmentsData and invoice_id:
+            self.pool['fatturapa.attachment.in'].extract_attachments(
+                cr, uid, AttachmentsData, invoice_id)
 
         self._addGlobalDiscount(
             cr, uid, invoice_id,
