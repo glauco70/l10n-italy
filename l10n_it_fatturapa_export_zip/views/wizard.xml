@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="wizard_fatturapa_export">
+        <field name="name">Export fatturapa xml</field>
+        <field name="model">wizard.fatturapa.export</field>
+        <field name="arch" type="xml">
+            <form string="Download ZIP E-Invoices XML" >
+                <field name="name"/>
+                <field name="mark_as_exported"/>
+                <separator colspan="4"/>
+                <group>
+                    <button string="Export zip" name="export_zip" type="object" />
+                    <button string="Cancel" special="cancel"/>
+                </group>
+            </form>
+        </field>
+        </record>
+
+        <act_window name="Download ZIP e-invoice XML"
+            res_model="wizard.fatturapa.export"
+            src_model="account.invoice"
+            view_mode="form"
+            target="new"
+            key2="client_action_multi"
+            id="action_fatturapa_export"
+            view_id="wizard_fatturapa_export"
+            context="{'default_active_ids': active_ids,}"/>
+    </data>
+</openerp>
