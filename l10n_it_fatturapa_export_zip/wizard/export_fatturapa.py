@@ -58,7 +58,7 @@ class WizardAccountInvoiceExport(models.TransientModel):
         view_id = view_rec and view_rec[1] or False
         if self.mark_as_exported:
             for attachment in attachments:
-                attachment.exported = True
+                attachment.zip_exported = True
         return {
             'view_type': 'form',
             'name': "Export E-Invoices",
