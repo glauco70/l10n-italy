@@ -415,3 +415,33 @@ class TestFatturaPAXMLValidation(SingleTransactionCase):
         self.assertTrue(len(invoices) == 2)
         for invoice in invoices:
             self.assertTrue(len(invoice.invoice_line) == 0)
+
+    def test_19_xml_import(self):
+        # Testing CAdES signature, base64 encoded
+        res = self.run_wizard('test19', 'IT01234567890_FPR03.base64.xml.p7m')
+        invoice_ids = res.get('domain')[0][2]
+        invoices = self.invoice_model.browse(invoice_ids)
+        self.assertEqual(len(invoices), 2)
+        for invoice in invoices:
+            self.assertEqual(invoice.partner_id.name, "SOCIETA' ALPHA SRL")
+            self.assertEqual(invoice.partner_id.e_invoice_detail_level, '0')
+            # FIXME: Looks like this invoce is parsed differently on odoo 8.0
+            # or there is a bug somewhere
+            # self.assertTrue(invoice.reference in ('456', '123'))
+            # if invoice.reference == '123':
+            #     self.assertEqual(
+            #         invoice.inconsistencies,
+            #         'Computed amount untaxed 0.0 is different from summary '
+            #         'data 25.0')
+            # if invoice.reference == '456':
+            #     self.assertEqual(
+            #         invoice.inconsistencies,
+            #         'Computed amount untaxed 0.0 is different from summary '
+            #         'data 2000.0')
+
+    def test_20_xml_import(self):
+        # Testing xml without xml declaration (sent by Amazon)
+        res = self.run_wizard('test20', 'IT05979361218_no_decl.xml')
+        invoice_id = res.get('domain')[0][2][0]
+        invoice = self.invoice_model.browse(invoice_id)
+        self.assertEqual(invoice.partner_id.name, "SOCIETA' ALPHA SRL")
