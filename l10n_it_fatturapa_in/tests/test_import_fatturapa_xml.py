@@ -425,19 +425,17 @@ class TestFatturaPAXMLValidation(SingleTransactionCase):
         for invoice in invoices:
             self.assertEqual(invoice.partner_id.name, "SOCIETA' ALPHA SRL")
             self.assertEqual(invoice.partner_id.e_invoice_detail_level, '0')
-            # FIXME: Looks like this invoce is parsed differently on odoo 8.0
-            # or there is a bug somewhere
-            # self.assertTrue(invoice.reference in ('456', '123'))
-            # if invoice.reference == '123':
-            #     self.assertEqual(
-            #         invoice.inconsistencies,
-            #         'Computed amount untaxed 0.0 is different from summary '
-            #         'data 25.0')
-            # if invoice.reference == '456':
-            #     self.assertEqual(
-            #         invoice.inconsistencies,
-            #         'Computed amount untaxed 0.0 is different from summary '
-            #         'data 2000.0')
+            self.assertTrue(invoice.supplier_invoice_number in ('456', '123'))
+            if invoice.supplier_invoice_number == '123':
+                self.assertEqual(
+                    invoice.inconsistencies,
+                    'Computed amount untaxed 0.0 is different from '
+                    'DatiRiepilogo 25.0')
+            if invoice.supplier_invoice_number == '456':
+                self.assertEqual(
+                    invoice.inconsistencies,
+                    'Computed amount untaxed 0.0 is different from '
+                    'DatiRiepilogo 2000.0')
 
     def test_20_xml_import(self):
         # Testing xml without xml declaration (sent by Amazon)
