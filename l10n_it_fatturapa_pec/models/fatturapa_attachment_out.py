@@ -37,7 +37,7 @@ class FatturaPAAttachmentOut(orm.Model):
                 ('rejected', 'Rejected (PA)'),
                 ('validated', 'Delivered'),
                 ('accepted', 'Accepted'),
-            ], string='State'),
+            ], string='State', track_visibility='onchange'),
         'last_sdi_response': fields.text('Last Response from Exchange System',
                                          readonly=True),
         'sending_date': fields.datetime('Sent date', readonly=True),

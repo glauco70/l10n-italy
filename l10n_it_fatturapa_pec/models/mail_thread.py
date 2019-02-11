@@ -118,10 +118,10 @@ class MailThread(orm.AbstractModel):
                 return []
 
         elif context.get('fetchmail_server_id', False):
-            fetchmail_server_id = self.pool.get('fetchmail.server').browse(
+            fetchmail_server = self.pool.get('fetchmail.server').browse(
                 cr, uid, context['fetchmail_server_id'],
                 context=context)
-            if fetchmail_server_id.is_fatturapa_pec:
+            if fetchmail_server.is_fatturapa_pec:
                 message_dict = self.message_parse(
                     cr, uid, message, save_original=True, context=context)
                 attachment_ids = self._create_message_attachments(
@@ -139,8 +139,42 @@ class MailThread(orm.AbstractModel):
                     self._clean_message_dict(message_dict)
                     self.pool.get('mail.message').create(
                         cr, uid, message_dict, context=context)
-                    _logger.error('Can\'t route PEC E-Mail with Message-Id: {}'
-                                  .format(message.get('Message-Id')))
+                    _logger.info(
+                        'Can\'t route PEC E-Mail with Message-Id: {}'.format(
+                            message.get('Message-Id'))
+                    )
+                    if fetchmail_server.e_inv_notify_partner_ids:
+                        self.env['mail.mail'].create({
+                            'subject': _(
+                                "PEC message [%s] not processed"
+                            ) % message.get('Subject'),
+                            'body_html': _(
+                                "<p>"
+                                "PEC message with Message-Id %s has been read "
+                                "but not processed, as not related to an "
+                                "e-invoice.</p>"
+                                "<p>Please check PEC mailbox %s, at server %s,"
+                                " with user %s</p>"
+                            ) % (
+                                message.get('Message-Id'),
+                                fetchmail_server.name, fetchmail_server.server,
+                                fetchmail_server.user
+                            ),
+                            'recipient_ids': [(
+                                6, 0,
+                                fetchmail_server.e_inv_notify_partner_ids.ids
+                            )]
+                        })
+                        _logger.info(
+                            'Notifying partners %s about message with '
+                            'Message-Id: %s' % (
+                                fetchmail_server.e_inv_notify_partner_ids.ids,
+                                message.get('Message-Id')))
+                    else:
+                        _logger.error(
+                            'Can\'t notify anyone about not processed '
+                            'PEC E-Mail with Message-Id: {}'.format(
+                                message.get('Message-Id')))
                 return []
 
         return super(MailThread, self).message_route(
