@@ -27,8 +27,8 @@ class Fetchmail(orm.Model):
             context = {}
         for server in self.browse(cr, uid, ids, context=context):
             if not server.is_fatturapa_pec:
-                super(Fetchmail, server).fetch_mail(
-                    cr, uid, ids, context=context)
+                super(Fetchmail, self).fetch_mail(
+                    cr, uid, [server.id], context=context)
             else:
                 mail_thread = self.pool.get('mail.thread')
                 _logger.info('start checking for new emails on %s server %s',
