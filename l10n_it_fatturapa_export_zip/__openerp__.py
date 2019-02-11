@@ -5,8 +5,7 @@
     "name": "Export fatturapa xml zip file",
     "summary": "Add ability to export multiple xml of e-invoice in "
                "a zip file.",
-    "version": "8.0.1.0.0",
-    "development_status": "Alpha",
+    "version": "7.0.1.0.0",
     "category": "other",
     "website": "https://github.com/OCA/l10n-italy",
     "author": "Efatto.it di Sergio Corato, Odoo Community Association (OCA)",

@@ -19,9 +19,8 @@
             <field name="inherit_id" ref="l10n_it_fatturapa_out.view_fatturapa_out_attachment_search"/>
             <field name="arch" type="xml">
                 <field name="name" position="after">
-                    <field name="zip_exported"/>
                     <filter name="zip_not_exported" string="ZIP Not Exported" domain="[('zip_exported','=', False)]"/>
-                    <filter name="zip_already_exported" string="ZIP Exported" domain="[('zip_exported','=', True)]"/>
+                    <filter name="zip_exported" string="ZIP Exported" domain="[('zip_exported','=', True)]"/>
                 </field>
             </field>
         </record>
@@ -54,9 +53,8 @@
             <field name="inherit_id" ref="l10n_it_fatturapa_in.view_fatturapa_in_attachment_search"/>
             <field name="arch" type="xml">
                 <field name="name" position="after">
-                    <field name="zip_exported"/>
                     <filter name="zip_not_exported" string="ZIP Not Exported" domain="[('zip_exported','=', False)]"/>
-                    <filter name="zip_already_exported" string="ZIP Exported" domain="[('zip_exported','=', True)]"/>
+                    <filter name="zip_exported" string="ZIP Exported" domain="[('zip_exported','=', True)]"/>
                 </field>
             </field>
         </record>

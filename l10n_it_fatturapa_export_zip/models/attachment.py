@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields
+from openerp.osv import orm, fields
 
 
-class FatturaAttachmentOut(models.Model):
-    _inherit = ['fatturapa.attachment.out']
+class FatturaAttachmentOut(orm.Model):
+    _inherit = 'fatturapa.attachment.out'
 
-    zip_exported = fields.Boolean('Zip Exported')
+    _columns = {
+        'zip_exported': fields.boolean('Zip Exported'),
+    }
 
 
-class FatturaAttachmentIn(models.Model):
-    _inherit = ['fatturapa.attachment.in']
+class FatturaAttachmentIn(orm.Model):
+    _inherit = 'fatturapa.attachment.in'
 
-    zip_exported = fields.Boolean('Zip Exported')
+    _columns = {
+        'zip_exported': fields.boolean('Zip Exported'),
+    }

@@ -1,71 +1,60 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, api, fields
-from openerp.tools import config
+from openerp.osv import orm, fields
 import base64
+import io
 import zipfile
-import os
-import tempfile
 
 
-class WizardAccountInvoiceExport(models.TransientModel):
+class WizardAccountInvoiceExport(orm.TransientModel):
     _name = "wizard.fatturapa.export"
 
-    data = fields.Binary("File", readonly=True)
-    name = fields.Char('Filename', size=32, readonly=True)
-    mark_as_exported = fields.Boolean('Mark as exported')
-    state = fields.Selection((
-        ('create', 'create'),
-        ('get', 'get'),
-    ), default='create')
+    _columns = {
+        'data': fields.binary("File", readonly=True),
+        'name': fields.char('Filename', size=32),
+        'mark_as_exported': fields.boolean('Mark as exported'),
+    }
 
-    @api.multi
-    def export_zip(self):
-        attachments = []
-        for invoice in self.env['account.invoice'].browse(
-                self._context['active_ids']):
-            if invoice.type in ['out_invoice', 'out_refund']:
-                if invoice.fatturapa_attachment_out_id:
-                    att = invoice.fatturapa_attachment_out_id
-                    attachments += [att]
-            else:
-                if invoice.fatturapa_attachment_in_id:
-                    att = invoice.fatturapa_attachment_in_id
-                    attachments += [att]
+    def export_zip(self, cr, uid, ids, context=None):
+        if context is None:
+            context = {}
+        wiz = self.browse(cr, uid, ids[0])
+        model = context.get('active_model', False)
+        attachments = self.pool[model].browse(
+                cr, uid, context.get('active_ids', []), context=context)
 
-        path = os.path.join(config['data_dir'], "filestore",
-                            self.env.cr.dbname)
-        compression = zipfile.ZIP_STORED
-        temp = tempfile.mktemp(suffix='.zip')
-        zf = zipfile.ZipFile(temp, mode="w")
-        for attachment in attachments:
-            file_name = attachment.store_fname
-            zf.write(os.path.join(path, file_name),
-                     attachment.name.replace('/', '_'),
-                     compress_type=compression)
+        fp = io.BytesIO()
+        zf = zipfile.ZipFile(fp, mode="w")
+
+        for att in attachments:
+            zf.writestr(att.datas_fname, base64.b64decode(att.datas))
         zf.close()
-        data = open(temp, 'rb').read()
+        fp.seek(0)
+        data = fp.read()
         export_report_name = 'E-Invoices XML'
+        if wiz.name:
+            export_report_name = wiz.name
         attach_vals = {
             'name': export_report_name + '.zip',
             'datas_fname': export_report_name + '.zip',
             'datas': base64.encodestring(data),
         }
-        att_id = self.env['ir.attachment'].create(attach_vals)
-        model_data_obj = self.env['ir.model.data']
+        att_id = self.pool['ir.attachment'].create(cr, uid, attach_vals,
+                                                   context=context)
+        model_data_obj = self.pool['ir.model.data']
         view_rec = model_data_obj.get_object_reference(
-            'base', 'view_attachment_form')
+            cr, uid, 'base', 'view_attachment_form')
         view_id = view_rec and view_rec[1] or False
-        if self.mark_as_exported:
+        if wiz.mark_as_exported:
             for attachment in attachments:
-                attachment.zip_exported = True
+                attachment.write({'zip_exported': True})
         return {
             'view_type': 'form',
             'name': "Export E-Invoices",
             'view_id': [view_id],
-            'res_id': att_id.id,
+            'res_id': att_id,
             'view_mode': 'form',
             'res_model': 'ir.attachment',
             'type': 'ir.actions.act_window',
-            'context': self._context,
+            'context': context,
         }
