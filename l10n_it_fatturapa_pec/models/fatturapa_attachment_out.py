@@ -48,7 +48,7 @@ class FatturaPAAttachmentOut(orm.Model):
 
     def reset_to_ready(self, cr, uid, ids, context=None):
         for attachment in self.browse(cr, uid, ids, context=context):
-            if attachment.state != 'sender_error':
+            if attachment.state not in ['sent', 'sender_error', 'rejected']:
                 raise osv.except_osv(_('UserError'), _(
                     "You can only reset 'sender error' files"))
             attachment.write({'state': 'ready'})
