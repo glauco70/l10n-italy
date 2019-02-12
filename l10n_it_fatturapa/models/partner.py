@@ -126,8 +126,7 @@ class res_partner(orm.Model):
         res = {'value': {}}
         if country_id and codice_destinatario:
             if self.pool['res.country'].browse(
-                    cr, uid, country_id, context).code == 'IT' \
-                    and codice_destinatario == 'XXXXXXX':
+                    cr, uid, country_id, context).code == 'IT':
                 res = {'value': {'codice_destinatario': '0000000'}}
             else:
                 res = {'value': {'codice_destinatario': 'XXXXXXX'}}
