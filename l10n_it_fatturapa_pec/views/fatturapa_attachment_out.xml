@@ -10,7 +10,7 @@
                 <xpath expr="//div" position="before">
                     <header>
                         <button name="send_via_pec" states="ready" string="Send Via PEC" type="object" class="oe_highlight"/>
-                        <button name="reset_to_ready" states="sent,sender_error,rejected" string="Reset to ready" type="object"/>
+                        <button name="reset_to_ready" string="Reset to ready" type="object"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                 </xpath>

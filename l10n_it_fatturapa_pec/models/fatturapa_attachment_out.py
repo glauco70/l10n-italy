@@ -50,7 +50,8 @@ class FatturaPAAttachmentOut(orm.Model):
         for attachment in self.browse(cr, uid, ids, context=context):
             if attachment.state not in ['sent', 'sender_error', 'rejected']:
                 raise osv.except_osv(_('UserError'), _(
-                    "You can only reset 'sender error' files"))
+                    "You can only reset 'sent', 'sender_error' and 'rejected'"
+                    " files"))
             attachment.write({'state': 'ready'})
 
     def _check_fetchmail(self, cr, uid, context=None):
