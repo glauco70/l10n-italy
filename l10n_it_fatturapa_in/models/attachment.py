@@ -84,8 +84,7 @@ class FatturaPAAttachmentIn(orm.Model):
                  "netto dell'eventuale sconto e comprensivo di imposta a debito "
                  "del cessionario / committente"),
         'registered': fields.function(_compute_registered,
-                                           string="Registered", 
-                                           type="boolean"),
+            string="Registered", type="boolean", store=True),
     }
 
     def get_xml_string(self, cr, uid, ids, context={}):
