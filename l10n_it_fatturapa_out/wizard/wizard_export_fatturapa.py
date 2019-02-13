@@ -417,15 +417,18 @@ class WizardExportFatturapa(orm.TransientModel):
         if partner.is_company:
             fatturapa.FatturaElettronicaHeader.CessionarioCommittente.\
                 DatiAnagrafici.Anagrafica = AnagraficaType(
-                    Denominazione=partner.name)
+                    Denominazione=partner.name.encode(
+                        'latin', 'ignore').decode('latin'))
         else:
             if not partner.lastname or not partner.firstname:
                 raise orm.except_orm(_('Error!'),
                     _("Partner %s deve avere nome e cognome") % partner.name)
             fatturapa.FatturaElettronicaHeader.CessionarioCommittente.\
                 DatiAnagrafici.Anagrafica = AnagraficaType(
-                    Cognome=partner.lastname,
-                    Nome=partner.firstname
+                    Cognome=partner.lastname.encode(
+                        'latin', 'ignore').decode('latin'),
+                    Nome=partner.firstname.encode(
+                        'latin', 'ignore').decode('latin')
                 )
         # not using for now
 
