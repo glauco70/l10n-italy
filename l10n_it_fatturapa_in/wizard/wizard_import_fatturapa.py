@@ -1163,7 +1163,8 @@ class WizardImportFatturapa(models.TransientModel):
                 'tax': float(Withholding.ImportoRitenuta),
                 'withholding_tax_id': wt_found[0].id,
             })
-            invoice.write({'withholding_tax_line': [(6, 0, [wh_line_id.id])]})
+            invoice.write({'withholding_tax_line': [(6, 0, [wh_line_id.id])],
+                           'withholding_tax': True})
         self._addGlobalDiscount(
             invoice_id, FatturaBody.DatiGenerali.DatiGeneraliDocumento)
         return invoice_id
