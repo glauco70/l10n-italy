@@ -525,9 +525,11 @@ class WizardExportFatturapa(orm.TransientModel):
         if partner.codice_destinatario == 'XXXXXXX':
             fatturapa.FatturaElettronicaHeader.CessionarioCommittente.Sede = (
                 IndirizzoType(
-                    Indirizzo=partner.street,
+                    Indirizzo=partner.street.encode(
+                        'latin', 'ignore').decode('latin'),
                     CAP='00000',
-                    Comune=partner.city,
+                    Comune=partner.city.encode(
+                        'latin', 'ignore').decode('latin'),
                     Provincia='EE',
                     Nazione=partner.country_id.code))
         else:
