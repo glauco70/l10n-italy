@@ -212,6 +212,8 @@ class WithholdingTaxStatement(models.Model):
                                       dp_obj.precision_get('Account'))
                 if st.invoice_id.type in ['in_refund', 'out_refund']:
                     amount_wt = -1 * amount_wt
+                elif st.invoice_id.amount_untaxed_signed < 0:
+                    amount_wt = -1 * amount_wt
             elif st.move_id:
                 tax_data = st.withholding_tax_id.compute_tax(amount_reconcile)
                 amount_wt = tax_data['tax']
@@ -345,7 +347,10 @@ class WithholdingTaxMove(models.Model):
                 break
         if line_to_reconcile:
             if self.credit_debit_line_id.invoice_id.type in\
-                    ['in_refund', 'out_invoice']:
+                ['in_refund', 'out_invoice'] or (
+                        self.credit_debit_line_id.invoice_id.type in
+                        ['out_refund', 'in_invoice'] and self.amount < 0
+                    ):
                 debit_move_id = self.credit_debit_line_id.id
                 credit_move_id = line_to_reconcile.id
             else:
