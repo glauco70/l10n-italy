@@ -161,8 +161,9 @@ class Attachment(orm.Model):
         return xml_string
 
     def get_fattura_elettronica_preview(self, cr, uid, ids, context=None):
+        company = self.pool['res.partner'].browse(cr, uid, uid).company_id
         xsl_path = get_module_resource(
-            'l10n_it_fatturapa', 'data', 'fatturaordinaria_v1.2.1.xsl')
+            'l10n_it_fatturapa', 'data', company.fatturapa_preview_style)
         xslt = ET.parse(xsl_path)
         xml_string = self.get_xml_string(cr, uid, ids[0], context)
         xml_file = BytesIO(xml_string)
