@@ -232,6 +232,21 @@ class WizardImportFatturapa(models.TransientModel):
 
             if cedPrest.IscrizioneREA:
                 REA = cedPrest.IscrizioneREA
+                rea_partners = partner_model.search([
+                    ('rea_code', '=', REA.NumeroREA),
+                    ('id', '!=', partner_id)
+                ])
+                if rea_partners:
+                    rea_nr = REA.NumeroREA
+                    rea_names = ", ".join(rea_partners.mapped('name'))
+                    p_name = partner_model.browse(partner_id).name
+                    raise UserError(
+                        _("Current invoice is from {} with REA Code"
+                          " {}. Yet it seems that partners {} have the same"
+                          " REA Code. This code should be unique; please fix"
+                          " it before importing this invoice."
+                          .format(p_name, rea_nr, rea_names))
+                    )
                 vals['rea_code'] = REA.NumeroREA
                 offices = self.ProvinceByCode(REA.Ufficio)
                 if not offices:
