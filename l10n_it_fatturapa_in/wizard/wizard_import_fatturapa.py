@@ -244,7 +244,7 @@ class WizardImportFatturapa(models.TransientModel):
                         _("Current invoice is from {} with REA Code"
                           " {}. Yet it seems that partners {} have the same"
                           " REA Code. This code should be unique; please fix"
-                          " it before importing this invoice."
+                          " it."
                           .format(p_name, rea_nr, rea_names))
                     )
                 else:
