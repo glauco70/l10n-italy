@@ -240,14 +240,15 @@ class WizardImportFatturapa(models.TransientModel):
                     rea_nr = REA.NumeroREA
                     rea_names = ", ".join(rea_partners.mapped('name'))
                     p_name = partner_model.browse(partner_id).name
-                    raise UserError(
+                    self.log_inconsistency(
                         _("Current invoice is from {} with REA Code"
                           " {}. Yet it seems that partners {} have the same"
                           " REA Code. This code should be unique; please fix"
                           " it before importing this invoice."
                           .format(p_name, rea_nr, rea_names))
                     )
-                vals['rea_code'] = REA.NumeroREA
+                else:
+                    vals['rea_code'] = REA.NumeroREA
                 offices = self.ProvinceByCode(REA.Ufficio)
                 if not offices:
                     self.log_inconsistency(
