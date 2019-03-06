@@ -52,16 +52,6 @@ class FatturaPAAttachmentIn(orm.Model):
             ret[att.id] = vals.get(name, False)
         return ret
 
-    def _search_xml_supplier_id(self, cr, uid, obj, name, args, context=None):
-        operator = 'not in'
-        domain = [('partner_id', '!=', False)]
-        ids = self.search(cr, uid, domain, context=context)
-        res = []
-        for att in self.browse(cr, uid, ids, context):
-            if len(att.in_invoice_ids) == att.invoices_number:
-                res.append(att.id)
-        return [('id', operator, res)]
-
     def _search_is_registered(self, cr, uid, obj, name, args, context=None):
         operator = 'not in'
         domain = [('in_invoice_ids', '!=', False)]
