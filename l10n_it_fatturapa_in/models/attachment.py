@@ -52,6 +52,16 @@ class FatturaPAAttachmentIn(orm.Model):
             ret[att.id] = vals.get(name, False)
         return ret
 
+    def _search_xml_supplier_id(self, cr, uid, obj, name, args, context=None):
+        operator = 'not in'
+        domain = [('partner_id', '!=', False)]
+        ids = self.search(cr, uid, domain, context=context)
+        res = []
+        for att in self.browse(cr, uid, ids, context):
+            if len(att.in_invoice_ids) == att.invoices_number:
+                res.append(att.id)
+        return [('id', operator, res)]
+
     def _search_is_registered(self, cr, uid, obj, name, args, context=None):
         operator = 'not in'
         domain = [('in_invoice_ids', '!=', False)]
@@ -81,16 +91,19 @@ class FatturaPAAttachmentIn(orm.Model):
                                            method=True, 
                                            string="Supplier", 
                                            relation="res.partner",
-                                           type="many2one"),
+                                           type="many2one",
+                                           store=True,),
         'invoices_number': fields.function(_compute_xml_data, 
                                            method=True, 
                                            string="Invoices number", 
-                                           type="integer"),
+                                           type="integer",
+                                           store=True,),
         'invoices_total': fields.function(_compute_xml_data, 
-                                           method=True, 
-                                           string="Invoices total", 
-                                           type="float",
-                                           help="Se indicato dal fornitore, Importo totale del documento al "
+                                          method=True,
+                                          string="Invoices total",
+                                          type="float",
+                                          store=True,
+                                          help="Se indicato dal fornitore, Importo totale del documento al "
                  "netto dell'eventuale sconto e comprensivo di imposta a debito "
                  "del cessionario / committente"),
         'registered': fields.function(_compute_registered,
