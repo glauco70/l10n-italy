@@ -238,6 +238,15 @@ class WizardImportFatturapa(orm.TransientModel):
                     'city': cedPrest.StabileOrganizzazione.Comune,
                     'register': cedPrest.DatiAnagrafici.AlboProfessionale or ''
                 }
+                if cedPrest.StabileOrganizzazione.NumeroCivico:
+                    vals['street'] = ' '.join(
+                        [vals['street'], cedPrest.StabileOrganizzazione.
+                            NumeroCivico])
+                country_ids = self.CountryByCode(
+                    cr, uid, cedPrest.StabileOrganizzazione.Nazione,
+                    context=context)
+                if country_ids:
+                    vals['country_id'] = country_ids[0]
             else:
                 vals = {
                     'street': cedPrest.Sede.Indirizzo,
@@ -245,6 +254,9 @@ class WizardImportFatturapa(orm.TransientModel):
                     'city': cedPrest.Sede.Comune,
                     'register': cedPrest.DatiAnagrafici.AlboProfessionale or ''
                 }
+                if cedPrest.Sede.NumeroCivico:
+                    vals['street'] = ' '.join(
+                        [vals['street'], cedPrest.Sede.NumeroCivico])
             if cedPrest.DatiAnagrafici.ProvinciaAlbo:
                 ProvinciaAlbo = cedPrest.DatiAnagrafici.ProvinciaAlbo
                 prov_ids = self.ProvinceByCode(
@@ -257,8 +269,13 @@ class WizardImportFatturapa(orm.TransientModel):
                         ProvinciaAlbo
                         )
                 vals['register_province'] = prov_ids[0]
-            if cedPrest.Sede.Provincia:
+            Provincia = False
+            if cedPrest.StabileOrganizzazione and \
+                    cedPrest.StabileOrganizzazione.Provincia:
+                Provincia = cedPrest.StabileOrganizzazione.Provincia
+            elif cedPrest.Sede.Provincia:
                 Provincia = cedPrest.Sede.Provincia
+            if Provincia:
                 prov_sede = self.ProvinceByCode(cr, uid, Provincia, context)
                 if not prov_sede:
                     self.log_inconsistency(
