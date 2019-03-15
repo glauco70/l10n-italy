@@ -225,6 +225,10 @@ class WizardImportFatturapa(orm.TransientModel):
             return partner_model.create(cr, uid, vals, context=context)
 
     def getCedPrest(self, cr, uid, cedPrest, context=None):
+        if context is None:
+            context = {}
+        if not context.get('inconsistencies'):
+            context['inconsistencies'] = ''
         partner_model = self.pool['res.partner']
         partner_id = self.getPartnerBase(
             cr, uid, cedPrest.DatiAnagrafici, context=context)
