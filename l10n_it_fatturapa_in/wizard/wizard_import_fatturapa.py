@@ -278,7 +278,9 @@ class WizardImportFatturapa(orm.TransientModel):
             if Provincia:
                 prov_sede = self.ProvinceByCode(cr, uid, Provincia, context)
                 if not prov_sede:
-                    self.log_inconsistency(
+                    if context.get('inconsistencies'):
+                        context['inconsistencies'] += '\n'
+                    context['inconsistencies'] += (
                         _('Provincia ( %s ) not present in system')
                         % Provincia
                     )
