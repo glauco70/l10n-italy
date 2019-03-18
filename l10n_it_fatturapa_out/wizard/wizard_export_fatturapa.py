@@ -626,19 +626,19 @@ class WizardExportFatturapa(models.TransientModel):
                 lambda x: x.lineRef == DettaglioLinea.NumeroLinea,
                 invoice.related_mngt_data_ids)
             if mngt_lines:
-                mngt_line = mngt_lines[0]
-                if mngt_line.name:
-                    dati_gestionali.TipoDato = mngt_line.name
-                if mngt_line.text_ref:
-                    dati_gestionali.RiferimentoTesto = mngt_line.text_ref
-                if mngt_line.number_ref:
-                    dati_gestionali.RiferimentoNumero = '%.2f' % \
-                        mngt_line.number_ref
-                if mngt_line.date_ref:
-                    dati_gestionali.RiferimentoData = mngt_line.date_ref
-                DettaglioLinea.AltriDatiGestionali.append(
-                    dati_gestionali
-                )
+                for mngt_line in mngt_lines:
+                    if mngt_line.name:
+                        dati_gestionali.TipoDato = mngt_line.name
+                    if mngt_line.text_ref:
+                        dati_gestionali.RiferimentoTesto = mngt_line.text_ref
+                    if mngt_line.number_ref:
+                        dati_gestionali.RiferimentoNumero = '%.2f' % \
+                            mngt_line.number_ref
+                    if mngt_line.date_ref:
+                        dati_gestionali.RiferimentoData = mngt_line.date_ref
+                    DettaglioLinea.AltriDatiGestionali.append(
+                        dati_gestionali
+                    )
             else:
                 if generic_mngt_line:
                     # if fatturapa line is not referred, and exist a
@@ -657,7 +657,6 @@ class WizardExportFatturapa(models.TransientModel):
                     DettaglioLinea.AltriDatiGestionali.append(
                         dati_gestionali
                     )
-
         return True
 
     def setDettaglioLinea(
