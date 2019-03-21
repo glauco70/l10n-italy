@@ -1,17 +1,21 @@
 # -*- coding: utf-8 -*-
 
 import os
-import openerp
 import tempfile
 import subprocess
+import logging
 
 from contextlib import closing
 from openerp.addons.web import http as openerpweb
+
+logger = logging.getLogger('FatturaPAController')
+
 
 def fix_session(req):
     cookie = req.httprequest.cookies.get("instance0|session_id")
     session_id = cookie.replace("%22","")
     req.session = req.httpsession.get(session_id)
+
 
 def html_to_pdf(html):
     html_tmp_file_fd, html_tmp_file_path = tempfile.mkstemp(suffix='.html')
@@ -23,6 +27,7 @@ def html_to_pdf(html):
     subprocess.call(c)
     with open(pdf_tmp_file_path, 'rb') as pdf_file:
         return pdf_file.read()
+
 
 class FatturaElettronicaController(openerpweb.Controller):
     _cp_path = "/fatturapa"
@@ -40,4 +45,5 @@ class FatturaElettronicaController(openerpweb.Controller):
             ]
             return req.make_response(pdf, headers=pdfhttpheaders)
         except:
+            logger.exception('preview failed')
             return req.not_found()
