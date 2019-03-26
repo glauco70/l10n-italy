@@ -18,15 +18,32 @@ def fix_session(req):
 
 
 def html_to_pdf(html):
-    html_tmp_file_fd, html_tmp_file_path = tempfile.mkstemp(suffix='.html')
+    html_tmp_file_fd, html_tmp_file_path = tempfile.mkstemp(
+        suffix='.html', prefix='fatturapa.')
     with closing(os.fdopen(html_tmp_file_fd, 'wb')) as html_tmp_file:
         html_tmp_file.write(html)
-    pdf_tmp_file_fd, pdf_tmp_file_path = tempfile.mkstemp(suffix='.pdf')
+    pdf_tmp_file_fd, pdf_tmp_file_path = tempfile.mkstemp(
+        suffix='.pdf', prefix='fatturapa.')
     os.close(pdf_tmp_file_fd)
     c = ["wkhtmltopdf", html_tmp_file_path, pdf_tmp_file_path]
-    subprocess.call(c)
-    with open(pdf_tmp_file_path, 'rb') as pdf_file:
-        return pdf_file.read()
+    # subprocess.call(c)
+    process = subprocess.Popen(c, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = process.communicate()
+    if process.returncode not in [0, 1]:
+        data = ''
+        logger.error('Error generating pdf: %s' % err)
+    else:
+        with open(pdf_tmp_file_path, 'rb') as pdf_file:
+            data = pdf_file.read()
+    try:
+        os.unlink(html_tmp_file_path)
+    except (OSError, IOError):
+        logger.error('Error trying to remove file %s' % html_tmp_file_path)
+    try:
+        os.unlink(pdf_tmp_file_path)
+    except (OSError, IOError):
+        logger.error('Error trying to remove file %s' % pdf_tmp_file_path)
+    return data
 
 
 class FatturaElettronicaController(openerpweb.Controller):
