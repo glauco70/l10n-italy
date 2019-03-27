@@ -11,6 +11,13 @@ from openerp.addons.web import http as openerpweb
 logger = logging.getLogger('FatturaPAController')
 
 
+def which(file_name):
+    for path in os.environ.get('PATH', os.defpath).split(os.pathsep):
+        if os.path.exists(os.path.join(path, file_name)):
+            return os.path.join(path, file_name)
+    return False
+
+
 def fix_session(req):
     cookie = req.httprequest.cookies.get("instance0|session_id")
     session_id = cookie.replace("%22","")
@@ -18,31 +25,42 @@ def fix_session(req):
 
 
 def html_to_pdf(html):
+    data = ''
+
     html_tmp_file_fd, html_tmp_file_path = tempfile.mkstemp(
         suffix='.html', prefix='fatturapa.')
     with closing(os.fdopen(html_tmp_file_fd, 'wb')) as html_tmp_file:
         html_tmp_file.write(html)
+
     pdf_tmp_file_fd, pdf_tmp_file_path = tempfile.mkstemp(
         suffix='.pdf', prefix='fatturapa.')
     os.close(pdf_tmp_file_fd)
-    c = ["wkhtmltopdf", html_tmp_file_path, pdf_tmp_file_path]
-    # subprocess.call(c)
-    process = subprocess.Popen(c, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out, err = process.communicate()
-    if process.returncode not in [0, 1]:
-        data = ''
-        logger.error('Error generating pdf: %s' % err)
+
+    executable = which("wkhtmltopdf")
+    if executable:
+        process = subprocess.Popen(
+            [executable, html_tmp_file_path, pdf_tmp_file_path],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+        out, err = process.communicate()
+        if process.returncode not in [0, 1]:
+            logger.error('Error generating pdf: %s' % err)
+        else:
+            with open(pdf_tmp_file_path, 'rb') as pdf_file:
+                data = pdf_file.read()
     else:
-        with open(pdf_tmp_file_path, 'rb') as pdf_file:
-            data = pdf_file.read()
+        logger.error('Error trying to find wkhtmltopdf executable!')
+
     try:
         os.unlink(html_tmp_file_path)
     except (OSError, IOError):
         logger.error('Error trying to remove file %s' % html_tmp_file_path)
+
     try:
         os.unlink(pdf_tmp_file_path)
     except (OSError, IOError):
         logger.error('Error trying to remove file %s' % pdf_tmp_file_path)
+
     return data
 
 
