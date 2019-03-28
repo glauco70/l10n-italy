@@ -24,7 +24,7 @@ def fix_session(req):
     req.session = req.httpsession.get(session_id)
 
 
-def html_to_pdf(html):
+def html_to_pdf(req, html):
     data = ''
 
     html_tmp_file_fd, html_tmp_file_path = tempfile.mkstemp(
@@ -36,7 +36,10 @@ def html_to_pdf(html):
         suffix='.pdf', prefix='fatturapa.')
     os.close(pdf_tmp_file_fd)
 
-    executable = which("wkhtmltopdf")
+    executable = req.session.model('ir.config_parameter').get_param(
+        'wkhtmltopdf.path')
+    if not executable:
+        executable = which("wkhtmltopdf")
     if executable:
         process = subprocess.Popen(
             [executable, html_tmp_file_path, pdf_tmp_file_path],
@@ -73,7 +76,7 @@ class FatturaElettronicaController(openerpweb.Controller):
             fix_session(req)
             a = req.session.model('ir.attachment')
             html = a.get_fattura_elettronica_preview([int(attachment_id)])
-            pdf = html_to_pdf(html)
+            pdf = html_to_pdf(req, html)
             pdfhttpheaders = [
                 ('Content-Type', 'application/pdf'),
                 ('Content-Length', len(pdf))
