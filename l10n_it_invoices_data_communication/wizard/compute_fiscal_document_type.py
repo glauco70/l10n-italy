@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import api, models
+from openerp import api, models
 
 
 class ComunicazioneDatiIvaRicalcoloTipoDocumentoFiscale(models.TransientModel):
