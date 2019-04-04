@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
-
+<openerp>
+<data>
     <record id="view_communication_form_exclude_e_inv" model="ir.ui.view">
         <field name="name">view_communication_form_exclude_e_inv</field>
         <field name="model">comunicazione.dati.iva</field>
@@ -11,4 +11,5 @@
             </field>
         </field>
     </record>
-</odoo>
+</data>
+</openerp>

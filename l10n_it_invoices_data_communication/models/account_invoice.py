@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
-from odoo import fields, models, _
-from odoo.exceptions import ValidationError
+from openerp import fields, models, _
+from openerp.exceptions import ValidationError
 
 
 class AccountInvoice(models.Model):

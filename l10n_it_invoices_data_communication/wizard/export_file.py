@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import base64
-from odoo import api, fields, models, exceptions, _
+from openerp import api, fields, models, exceptions, _
 
 
 class ComunicazioneDatiIvaExportFile(models.TransientModel):
