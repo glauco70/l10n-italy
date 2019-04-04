@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import api, models, exceptions, _
+from openerp import api, models, exceptions, _
 
 
 class SplitBigCommunication(models.TransientModel):

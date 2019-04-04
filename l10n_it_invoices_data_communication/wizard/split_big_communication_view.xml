@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<odoo>
-
+<openerp>
+<data>
     <record id="wizard_split_big_communication" model="ir.ui.view">
         <field name="name">Split big communication</field>
         <field name="model">wizard.split.big.invoices.communication</field>
@@ -33,5 +33,5 @@
         <field name="view_id" ref="wizard_split_big_communication"/>
         <field name="target">new</field>
     </record>
-
-</odoo>
+</data>
+</openerp>
