@@ -28,7 +28,7 @@ class AccountInvoice(models.Model):
 
         tax_lines = []
         tax_grouped = {}
-        for tax_line in fattura.tax_line_ids:
+        for tax_line in fattura.tax_line:
             tax = tax_line.tax_id
             aliquota = tax.amount
             parent = tax_model.search([('children_tax_ids', 'in', [tax.id])])
