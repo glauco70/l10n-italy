@@ -430,10 +430,8 @@ class ComunicazioneDatiIva(models.Model):
         dati_fatture = []
         posizione = 0
         for cessionario in cessionari:
-            fatture = fatture_emesse.filtered(
-                lambda fe:
-                [x for x in fatture_emesse if x.partner_id.id ==
-                    cessionario.id])
+            fatture = [x for x in fatture_emesse if x.partner_id.id ==
+                    cessionario.id]
             vals_fatture = []
             for fattura in fatture:
                 posizione += 1
@@ -484,8 +482,8 @@ class ComunicazioneDatiIva(models.Model):
                   ('move_id', '!=', False),
                   ('move_id.journal_id', 'not in', no_journal_ids),
                   ('company_id', '=', self.company_id.id),
-                  ('date_invoice', '>=', self.date_start),
-                  ('date_invoice', '<=', self.date_end),
+                  ('registration_date', '>=', self.date_start),
+                  ('registration_date', '<=', self.date_end),
                   '|',
                   ('fiscal_document_type_id.out_invoice', '=', True),
                   ('fiscal_document_type_id.out_refund', '=', True),
@@ -502,10 +500,8 @@ class ComunicazioneDatiIva(models.Model):
         posizione = 0
         for cedente in cedenti:
             # Fatture
-            fatture = fatture_ricevute.filtered(
-                lambda fr:
-                fatture_ricevute.partner_id.id ==
-                    cedente.id)
+            fatture = [x for x in fatture_ricevute if x.partner_id.id ==
+                 cedente.id]
             vals_fatture = []
             for fattura in fatture:
                 posizione += 1
@@ -516,7 +512,7 @@ class ComunicazioneDatiIva(models.Model):
                         fattura.fiscal_document_type_id.id,
                     'dati_fattura_Data': fattura.date_invoice,
                     'dati_fattura_DataRegistrazione':
-                        fattura.date,
+                        fattura.registration_date,
                     'dati_fattura_Numero': self._parse_fattura_numero(
                         fattura.reference) or '',
                     'dati_fattura_iva_ids':
@@ -556,8 +552,8 @@ class ComunicazioneDatiIva(models.Model):
                   ('move_id', '!=', False),
                   ('move_id.journal_id', 'not in', no_journal_ids),
                   ('company_id', '=', self.company_id.id),
-                  ('date', '>=', self.date_start),
-                  ('date', '<=', self.date_end),
+                  ('registration_date', '>=', self.date_start),
+                  ('registration_date', '<=', self.date_end),
                   '|',
                   ('fiscal_document_type_id.in_invoice', '=', True),
                   ('fiscal_document_type_id.in_refund', '=', True), ]
@@ -2461,7 +2457,7 @@ class ComunicazioneDatiIvaFattureRicevuteBody(models.Model):
                 fattura.dati_fattura_Numero = fattura.invoice_id.number
                 fattura.dati_fattura_Data = fattura.invoice_id.date_invoice
                 fattura.dati_fattura_DataRegistrazione = \
-                    fattura.invoice_id.date
+                    fattura.invoice_id.registration_date
                 # tax
                 tax_lines = []
                 for tax_line in fattura.invoice_id.tax_line:
