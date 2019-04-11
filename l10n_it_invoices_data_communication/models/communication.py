@@ -431,7 +431,7 @@ class ComunicazioneDatiIva(models.Model):
         posizione = 0
         for cessionario in cessionari:
             fatture = [x for x in fatture_emesse if x.partner_id.id ==
-                    cessionario.id]
+                       cessionario.id]
             vals_fatture = []
             for fattura in fatture:
                 posizione += 1
@@ -501,7 +501,7 @@ class ComunicazioneDatiIva(models.Model):
         for cedente in cedenti:
             # Fatture
             fatture = [x for x in fatture_ricevute if x.partner_id.id ==
-                 cedente.id]
+                       cedente.id]
             vals_fatture = []
             for fattura in fatture:
                 posizione += 1

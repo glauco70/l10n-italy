@@ -93,59 +93,45 @@ class AccountInvoice(models.Model):
             if tax_line.tax_code_id and tax_line.tax_code_id in child_taxes:
                 # this is a child tax: sum amount from not deductible
                 # and pop from the group
-                tax_grouped_id = tax_line.tax_code_id
+                main_tax = tax_line.tax_code_id
                 tax_id = self.env['account.tax'].search(
-                    [('tax_code_id', '=', tax_grouped_id.id)])
+                    [('tax_code_id', '=', main_tax.id)])
                 sister_tax_id = tax_id.parent_id.child_ids.filtered(
                     lambda z: z.id != tax_id.id)[0]
                 if tax_id.account_collected_id:
-                    tax_grouped[sister_tax_id.tax_code_id.id].update({
-                        'Imposta': tax_grouped[sister_tax_id.tax_code_id.id][
-                            'Imposta'] + tax_line.amount,
-                    })
+                    tax_grouped[sister_tax_id.tax_code_id.id][
+                        'Imposta'] += tax_line.amount
                     tax_grouped.pop(tax_id.tax_code_id.id)
                 else:
-                    tax_grouped[tax_grouped_id.id].update({
-                        'ImponibileImporto': tax_grouped[
-                                tax_grouped_id.id][
-                            'ImponibileImporto'] + tax_line.base,
-                        'Imposta': tax_grouped[tax_grouped_id.id][
-                            'Imposta'] + tax_line.amount,
-                        'is_base': False,
-                    })
+                    tax_grouped[main_tax.id][
+                        'ImponibileImporto'] += tax_line.base
+                    tax_grouped[main_tax.id]['Imposta'] += tax_line.amount
+                    tax_grouped[main_tax.id]['is_base'] = False
             elif tax_line.tax_code_id.id and tax_line.tax_code_id.id in \
                     tax_grouped:
-                tax_grouped_id = tax_line.tax_code_id
-                tax_grouped[tax_grouped_id.id].update({
-                    'ImponibileImporto': tax_grouped[tax_grouped_id.id][
-                        'ImponibileImporto'] + tax_line.base,
-                    'Imposta': tax_grouped[tax_grouped_id.id][
-                        'Imposta'] + tax_line.amount,
-                    'is_base': False,
-                })
+                main_tax = tax_line.tax_code_id
+                tax_grouped[main_tax.id]['ImponibileImporto'] += tax_line.base
+                tax_grouped[main_tax.id]['Imposta'] += tax_line.amount
+                tax_grouped[main_tax.id]['is_base'] = False
             elif tax_line.base_code_id.id and tax_line.base_code_id.id\
                     in tax_grouped:
-                tax_grouped_id = tax_line.base_code_id
-                tax_grouped[tax_grouped_id.id].update({
-                    'ImponibileImporto': tax_grouped[tax_grouped_id.id][
-                        'ImponibileImporto'] + tax_line.base,
-                    'Imposta': tax_grouped[tax_grouped_id.id][
-                        'Imposta'] + tax_line.amount,
-                    'is_base': True,
-                })
+                main_tax = tax_line.base_code_id
+                tax_grouped[main_tax.id]['ImponibileImporto'] += tax_line.base
+                tax_grouped[main_tax.id]['Imposta'] += tax_line.amount
+                tax_grouped[main_tax.id]['is_base'] = True
 
-            if not tax_grouped[tax_grouped_id.id].get('is_base', False):
-                tax = tax_grouped_id.tax_ids[0]
+            if not tax_grouped[main_tax.id].get('is_base', False):
+                tax = main_tax.tax_ids[0]
                 # if tax_id is a child of other tax, use it for aliquota
                 if tax.parent_id and tax.parent_id.child_depend:
                     tax = tax.parent_id
             else:
-                tax = tax_grouped_id.base_tax_ids[0]
+                tax = main_tax.base_tax_ids[0]
             # tax = tax_line.tax_id
             aliquota = tax.amount * 100
             payability = tax.payability or 'I'
             kind_id = tax.kind_id.id
-            tax_grouped[tax_grouped_id.id].update({
+            tax_grouped[main_tax.id].update({
                 'Aliquota': aliquota,
                 'Natura_id': kind_id,
                 'EsigibilitaIVA': payability,
@@ -173,7 +159,8 @@ class AccountInvoice(models.Model):
             # else:
             #     tax_grouped[main_tax.id]['Imposta'] += imposta
             # if tax.account_id:
-            #     # account_id è valorizzato per la parte detraibile dell'imposta
+            #     # account_id è valorizzato per la parte detraibile
+            #     # dell'imposta
             #     # In questa tax_line è presente il totale dell'imponibile
             #     # per l'imposta corrente
             #     tax_grouped[main_tax.id]['ImponibileImporto'] += base
