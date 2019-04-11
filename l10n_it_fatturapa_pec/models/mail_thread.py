@@ -14,11 +14,11 @@ _logger = logging.getLogger(__name__)
 
 FATTURAPA_ACCOUNT = "@pec.fatturapa.it"
 FATTURAPA_IN_REGEX = '^(IT[a-zA-Z0-9]{11,16}|'\
-                     '(?!([A-Z]{2})?IT)[a-zA-Z0-9]{2,28})'\
-                     '_[a-zA-Z0-9]{,5}.(xml|XML|zip|ZIP)'
+                     '(?!IT)[A-Z]{2}[a-zA-Z0-9]{2,28})'\
+                     '_[a-zA-Z0-9]{1,5}[.](xml|XML|zip|ZIP)$'
 RESPONSE_MAIL_REGEX = '(IT[a-zA-Z0-9]{11,16}|'\
-                      '(?!([A-Z]{2})?IT)[a-zA-Z0-9]{2,28})'\
-                      '_[a-zA-Z0-9]{,5}'\
+                      '(?!IT)[A-Z]{2}[a-zA-Z0-9]{2,28})'\
+                      '_[a-zA-Z0-9]{1,5}'\
                       '_MT_[a-zA-Z0-9]{,3}'
 
 
