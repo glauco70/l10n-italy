@@ -61,14 +61,18 @@ class FatturaPAAttachmentIn(orm.Model):
         return ret
 
     def _search_is_registered(self, cr, uid, obj, name, args, context=None):
-        operator = 'not in'
-        domain = [('in_invoice_ids', '!=', False)]
-        ids = self.search(cr, uid, domain, context=context)
-        res = []
-        for att in self.browse(cr, uid, ids, context):
-            if len(att.in_invoice_ids) == att.invoices_number:
-                res.append(att.id)
-        return [('id', operator, res)]
+        cr.execute("""
+            SELECT inv.fatturapa_attachment_in_id FROM (
+                SELECT a.fatturapa_attachment_in_id, COUNT(a.id) AS count
+                FROM account_invoice AS a
+                WHERE a.fatturapa_attachment_in_id IS NOT NULL
+                GROUP BY a.fatturapa_attachment_in_id) AS inv
+            INNER JOIN fatturapa_attachment_in AS att
+            ON inv.fatturapa_attachment_in_id = att.id
+            WHERE inv.count = att.invoices_number
+        """)
+        attachment_ids = [r[0] for r in cr.fetchall()]
+        return [('id', 'in', attachment_ids)]
 
     def _compute_registered(self, cr, uid, ids, name, unknow_none, context=None):
         ret = {}
@@ -113,9 +117,12 @@ class FatturaPAAttachmentIn(orm.Model):
                                          store=True, ),
     }
 
-    def get_xml_string(self, cr, uid, ids, context={}):
+    def get_xml_string(self, cr, uid, ids, context=None):
+        if context is None:
+            context = {}
         for fattAttInBrws in self.browse(cr, uid, ids, context):
-            return fattAttInBrws.ir_attachment_id.get_xml_string(cr, uid, fattAttInBrws.ir_attachment_id.id)
+            return fattAttInBrws.ir_attachment_id.get_xml_string(
+                cr, uid, fattAttInBrws.ir_attachment_id.id)
         return ''
 
     def set_name(self, cr, uid, ids, datas_fname, context=None):
