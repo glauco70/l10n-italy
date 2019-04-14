@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 from openerp import fields, models, _
 from openerp.exceptions import ValidationError
 
@@ -13,9 +12,9 @@ class AccountInvoice(models.Model):
 
     def _compute_taxes_in_company_currency(self, vals):
         try:
-            exchange_rate = (
-                self.amount_total_signed /
-                self.amount_total_company_signed)
+            exchange_rate = abs(
+                self.amount_total /
+                self.move_id.amount)
         except ZeroDivisionError:
             exchange_rate = 1
         vals['ImponibileImporto'] = vals['ImponibileImporto'] / exchange_rate
@@ -24,7 +23,7 @@ class AccountInvoice(models.Model):
     def _get_tax_comunicazione_dati_iva(self):
         self.ensure_one()
         fattura = self
-        tax_model = self.env['account.tax']
+        tax_code_model = self.env['account.tax.code']
 
         tax_lines = []
         tax_grouped = {}
@@ -62,7 +61,6 @@ class AccountInvoice(models.Model):
                         'Aliquota': 0.0,
                         'Natura_id': False,
                         'EsigibilitaIVA': False,
-                        'Detraibile': 0.0,
                         'is_base': False
                     }
                     for x in taxes | child_taxes}
@@ -74,7 +72,6 @@ class AccountInvoice(models.Model):
                         'Aliquota': 0.0,
                         'Natura_id': False,
                         'EsigibilitaIVA': False,
-                        'Detraibile': 0.0,
                         'is_base': True}
                     for x in bases}
             if bases and (taxes or child_taxes):
@@ -85,7 +82,6 @@ class AccountInvoice(models.Model):
                         'Aliquota': 0.0,
                         'Natura_id': False,
                         'EsigibilitaIVA': False,
-                        'Detraibile': 0.0,
                         'is_base': True}
                     for x in bases})
 
@@ -101,7 +97,11 @@ class AccountInvoice(models.Model):
                 if tax_id.account_collected_id:
                     tax_grouped[sister_tax_id.tax_code_id.id][
                         'Imposta'] += tax_line.amount
+                    tax_grouped[sister_tax_id.tax_code_id.id][
+                        'Detraibile'] = (
+                            (1 - sister_tax_id.amount) * 100)
                     tax_grouped.pop(tax_id.tax_code_id.id)
+                    continue
                 else:
                     tax_grouped[main_tax.id][
                         'ImponibileImporto'] += tax_line.base
@@ -127,61 +127,21 @@ class AccountInvoice(models.Model):
                     tax = tax.parent_id
             else:
                 tax = main_tax.base_tax_ids[0]
-            # tax = tax_line.tax_id
+
             aliquota = tax.amount * 100
-            payability = tax.payability or 'I'
+            payability = tax.payability
             kind_id = tax.kind_id.id
             tax_grouped[main_tax.id].update({
                 'Aliquota': aliquota,
                 'Natura_id': kind_id,
                 'EsigibilitaIVA': payability,
-                'Detraibile': 0.0,
             })
-            # parent = tax_model.search([('children_tax_ids', 'in', [tax.id])])
-            # if parent:
-            #     main_tax = parent
-            #     aliquota = parent.amount
-            # else:
-            #     main_tax = tax
-            # kind_id = main_tax.kind_id.id
-            # payability = main_tax.payability
-            # imposta = tax_line.amount
-            # base = tax_line.base
-            # if main_tax.id not in tax_grouped:
-            #     tax_grouped[main_tax.id] = {
-            #         'ImponibileImporto': 0,
-            #         'Imposta': imposta,
-            #         'Aliquota': aliquota,
-            #         'Natura_id': kind_id,
-            #         'EsigibilitaIVA': payability,
-            #         'Detraibile': 0.0,
-            #     }
-            # else:
-            #     tax_grouped[main_tax.id]['Imposta'] += imposta
-            # if tax.account_id:
-            #     # account_id è valorizzato per la parte detraibile
-            #     # dell'imposta
-            #     # In questa tax_line è presente il totale dell'imponibile
-            #     # per l'imposta corrente
-            #     tax_grouped[main_tax.id]['ImponibileImporto'] += base
 
         for tax_id in tax_grouped:
-            tax = tax_model.browse(tax_id)
+            tax = tax_code_model.browse(tax_id)
             vals = tax_grouped[tax_id]
-            # if tax.child_ids:
-            #     parte_detraibile = 0.0
-            #     for child_tax in tax.child_ids:
-            #         if child_tax.account_id:
-            #             parte_detraibile = child_tax.amount
-            #             break
-            #     if vals['Aliquota'] and parte_detraibile:
-            #         vals['Detraibile'] = (
-            #             100 / (vals['Aliquota'] / parte_detraibile)
-            #         )
-            #     else:
-            #         vals['Detraibile'] = 0.0
             vals = self._check_tax_comunicazione_dati_iva(tax, vals)
-            # fattura._compute_taxes_in_company_currency(vals)
+            fattura._compute_taxes_in_company_currency(vals)
             tax_lines.append((0, 0, vals))
 
         return tax_lines
