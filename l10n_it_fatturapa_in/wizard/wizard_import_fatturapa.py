@@ -324,11 +324,13 @@ class WizardImportFatturapa(orm.TransientModel):
                         _('REA Office Code ( %s ) not present in system') %
                         REA.Ufficio
                         )
-                office_id = office_ids[0]
-                vals['rea_office'] = office_id
-                vals['rea_capital'] = REA.CapitaleSociale or 0.0
-                vals['rea_member_type'] = REA.SocioUnico or False
-                vals['rea_liquidation_state'] = REA.StatoLiquidazione or False
+                else:
+                    office_id = office_ids[0]
+                    vals['rea_office'] = office_id
+                    vals['rea_capital'] = REA.CapitaleSociale or 0.0
+                    vals['rea_member_type'] = REA.SocioUnico or False
+                    vals['rea_liquidation_state'] = REA.StatoLiquidazione\
+                        or False
 
             if cedPrest.Contatti:
                 vals['phone'] = cedPrest.Contatti.Telefono
