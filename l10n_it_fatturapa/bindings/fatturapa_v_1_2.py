@@ -4109,6 +4109,8 @@ class DatiTrasportoType (pyxb.binding.basis.complexTypeDefinition):
 
     PesoNetto = property(__PesoNetto.value, __PesoNetto.set, None, None)
 
+    pyxb.PreserveInputTimeZone(True)
+
     # Element DataOraRitiro uses Python identifier DataOraRitiro
     __DataOraRitiro = pyxb.binding.content.ElementDeclaration(
         pyxb.namespace.ExpandedName(
