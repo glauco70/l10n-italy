@@ -75,13 +75,24 @@ class FatturaPAAttachmentIn(orm.Model):
         return [('id', 'in', attachment_ids)]
 
     def _compute_registered(self, cr, uid, ids, name, unknow_none, context=None):
-        ret = {}
+        res = {}
+        cr.execute("""
+            SELECT att.id, inv.count FROM (
+                SELECT a.fatturapa_attachment_in_id, COUNT(a.id) AS count
+                FROM account_invoice AS a
+                WHERE a.fatturapa_attachment_in_id IS NOT NULL
+                GROUP BY a.fatturapa_attachment_in_id) AS inv
+            INNER JOIN fatturapa_attachment_in AS att
+            ON inv.fatturapa_attachment_in_id = att.id
+            WHERE att.id in %s
+        """, (tuple(ids),))
+        lookup = dict(cr.fetchall())
         for att in self.browse(cr, uid, ids, context):
-            if att.in_invoice_ids and len(att.in_invoice_ids) == att.invoices_number:
-                ret[att.id] = True
+            if lookup.get(att.id, -1) == att.invoices_number:
+                res[att.id] = True
             else:
-                ret[att.id] = False
-        return ret
+                res[att.id] = False
+        return res
 
     _columns = {
         'ir_attachment_id': fields.many2one(
