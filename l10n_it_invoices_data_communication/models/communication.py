@@ -514,7 +514,7 @@ class ComunicazioneDatiIva(models.Model):
                     'dati_fattura_DataRegistrazione':
                         fattura.registration_date,
                     'dati_fattura_Numero': self._parse_fattura_numero(
-                        fattura.reference) or '',
+                        fattura.supplier_invoice_number) or '',
                     'dati_fattura_iva_ids':
                         fattura._get_tax_comunicazione_dati_iva()
                 }
