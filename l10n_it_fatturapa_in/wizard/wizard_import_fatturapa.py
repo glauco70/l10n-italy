@@ -225,7 +225,12 @@ class WizardImportFatturapa(orm.TransientModel):
                     not DatiAnagrafici.Anagrafica.Nome and \
                     not DatiAnagrafici.Anagrafica.Cognome:
                 vals['name'] = _('Unknown')
-
+            _logger.info(
+                u'NEW PARTNER CREATION: nome [%s] cogn [%s] denom. [%S]' % (
+                    vals['firstname'] or 'no firstname',
+                    vals['lastname'] or 'no lastname',
+                    vals['name'] or 'no company name',
+                ))
             return partner_model.create(cr, uid, vals, context=context)
 
     def getCedPrest(self, cr, uid, cedPrest, context=None):
