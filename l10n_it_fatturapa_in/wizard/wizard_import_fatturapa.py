@@ -226,7 +226,7 @@ class WizardImportFatturapa(orm.TransientModel):
                     not DatiAnagrafici.Anagrafica.Cognome:
                 vals['name'] = _('Unknown')
             _logger.info(
-                u'NEW PARTNER CREATION: nome [%s] cogn [%s] denom. [%S]' % (
+                u'NEW PARTNER CREATION: nome [%s] cogn [%s] denom. [%s]' % (
                     vals.get('firstname','no firstname'),
                     vals.get('lastname', 'no lastname'),
                     vals.get('name', 'no company name'),
