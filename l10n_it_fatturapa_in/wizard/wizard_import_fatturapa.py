@@ -215,26 +215,17 @@ class WizardImportFatturapa(orm.TransientModel):
                 'eori_code': DatiAnagrafici.Anagrafica.CodEORI or '',
                 'country_id': country_id,
             }
-            if DatiAnagrafici.Anagrafica.Nome:
-                vals['firstname'] = DatiAnagrafici.Anagrafica.Nome
-            if DatiAnagrafici.Anagrafica.Cognome:
-                vals['lastname'] = DatiAnagrafici.Anagrafica.Cognome
-            if DatiAnagrafici.Anagrafica.Denominazione:
+            if DatiAnagrafici.Anagrafica.Nome or \
+                    DatiAnagrafici.Anagrafica.Cognome:
+                if DatiAnagrafici.Anagrafica.Nome:
+                    vals['firs_tname'] = DatiAnagrafici.Anagrafica.Nome
+                if DatiAnagrafici.Anagrafica.Cognome:
+                    vals['last_name'] = DatiAnagrafici.Anagrafica.Cognome
+                vals['name'] = str(DatiAnagrafici.Anagrafica.Nome) + ' ' \
+                    + str(DatiAnagrafici.Anagrafica.Cognome)
+            elif DatiAnagrafici.Anagrafica.Denominazione:
                 vals['name'] = DatiAnagrafici.Anagrafica.Denominazione
-            if not DatiAnagrafici.Anagrafica.Denominazione and \
-                    not DatiAnagrafici.Anagrafica.Nome and \
-                    not DatiAnagrafici.Anagrafica.Cognome:
-                vals['name'] = _('Unknown')
-            _logger.info(
-                u'NEW PARTNER CREATION: NOME [%s] COGN [%s] DENOM. [%s]' % (
-                    vals.get('firstname','no firstname'),
-                    vals.get('lastname', 'no lastname'),
-                    vals.get('name', 'no company name'),
-                ))
-            _logger.info(
-                u'NEW PARTNER CREATION: is company [%s]' % (
-                    vals.get('is_company'),
-                ))
+
             return partner_model.create(cr, uid, vals, context=context)
 
     def getCedPrest(self, cr, uid, cedPrest, context=None):
