@@ -221,6 +221,10 @@ class WizardImportFatturapa(orm.TransientModel):
                 vals['lastname'] = DatiAnagrafici.Anagrafica.Cognome
             if DatiAnagrafici.Anagrafica.Denominazione:
                 vals['name'] = DatiAnagrafici.Anagrafica.Denominazione
+            if not DatiAnagrafici.Anagrafica.Denominazione and \
+                    not DatiAnagrafici.Anagrafica.Nome and \
+                    not DatiAnagrafici.Anagrafica.Cognome:
+                vals['name'] = _('Unknown')
 
             return partner_model.create(cr, uid, vals, context=context)
 
