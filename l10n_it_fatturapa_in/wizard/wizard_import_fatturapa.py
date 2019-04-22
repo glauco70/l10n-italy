@@ -218,7 +218,7 @@ class WizardImportFatturapa(orm.TransientModel):
             if DatiAnagrafici.Anagrafica.Nome or \
                     DatiAnagrafici.Anagrafica.Cognome:
                 if DatiAnagrafici.Anagrafica.Nome:
-                    vals['firs_tname'] = DatiAnagrafici.Anagrafica.Nome
+                    vals['first_tname'] = DatiAnagrafici.Anagrafica.Nome
                 if DatiAnagrafici.Anagrafica.Cognome:
                     vals['last_name'] = DatiAnagrafici.Anagrafica.Cognome
                 vals['name'] = str(DatiAnagrafici.Anagrafica.Nome) + ' ' \
