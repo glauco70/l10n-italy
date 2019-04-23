@@ -80,7 +80,7 @@
 	            <search>
 	                <field name="name"></field>
                     <field name="xml_supplier_id"/>
-	                <filter name="to_register" string="To Register" domain="[('registered','=',False)]"/>
+	                <filter name="to_register" string="To Register" domain="[('to_register', '=', True)]"/>
 	            </search>
 	        </field>
 	    </record>

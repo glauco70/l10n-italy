@@ -25,6 +25,17 @@ from openerp.tools.translate import _
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
 
 
+REGISTERED_INVOICES_SEARCH_QUERY = """
+    SELECT inv.fatturapa_attachment_in_id FROM (
+        SELECT a.fatturapa_attachment_in_id, COUNT(a.id) AS count
+        FROM account_invoice AS a
+        WHERE a.fatturapa_attachment_in_id IS NOT NULL
+        GROUP BY a.fatturapa_attachment_in_id) AS inv
+    INNER JOIN fatturapa_attachment_in AS att
+    ON inv.fatturapa_attachment_in_id = att.id
+    WHERE inv.count = att.invoices_number
+"""
+
 class FatturaPAAttachmentIn(orm.Model):
     _name = "fatturapa.attachment.in"
     _description = "FatturaPA import File"
@@ -32,14 +43,14 @@ class FatturaPAAttachmentIn(orm.Model):
     _inherit = ['mail.thread']
     _order = 'id desc'
 
-    def _compute_xml_data(self, cr, uid, ids, name, unknow_none, context={}):
+    def _compute_xml_data(self, cr, uid, ids, name, unknow_none, context=None):
         ret = {}
         for att in self.browse(cr, uid, ids, context):
-            fatt = self.pool.get('wizard.import.fatturapa').get_invoice_obj(cr, uid, att)
+            fatt = self.pool.get('wizard.import.fatturapa').get_invoice_obj(
+                cr, uid, att)
             cedentePrestatore = fatt.FatturaElettronicaHeader.CedentePrestatore
             partner_id = self.pool.get('wizard.import.fatturapa').getCedPrest(
-                cr, uid,
-                cedentePrestatore)
+                cr, uid, cedentePrestatore)
             vals = {
                 'xml_supplier_id': partner_id,
                 'invoices_number': len(fatt.FatturaElettronicaBody),
@@ -61,18 +72,14 @@ class FatturaPAAttachmentIn(orm.Model):
         return ret
 
     def _search_is_registered(self, cr, uid, obj, name, args, context=None):
-        cr.execute("""
-            SELECT inv.fatturapa_attachment_in_id FROM (
-                SELECT a.fatturapa_attachment_in_id, COUNT(a.id) AS count
-                FROM account_invoice AS a
-                WHERE a.fatturapa_attachment_in_id IS NOT NULL
-                GROUP BY a.fatturapa_attachment_in_id) AS inv
-            INNER JOIN fatturapa_attachment_in AS att
-            ON inv.fatturapa_attachment_in_id = att.id
-            WHERE inv.count = att.invoices_number
-        """)
+        cr.execute(REGISTERED_INVOICES_SEARCH_QUERY)
         attachment_ids = [r[0] for r in cr.fetchall()]
         return [('id', 'in', attachment_ids)]
+
+    def _search_to_register(self, cr, uid, obj, name, args, context=None):
+        cr.execute(REGISTERED_INVOICES_SEARCH_QUERY)
+        attachment_ids = [r[0] for r in cr.fetchall()]
+        return [('id', 'not in', attachment_ids)]
 
     def _compute_registered(self, cr, uid, ids, name, unknow_none, context=None):
         res = {}
@@ -88,10 +95,12 @@ class FatturaPAAttachmentIn(orm.Model):
         """, (tuple(ids),))
         lookup = dict(cr.fetchall())
         for att in self.browse(cr, uid, ids, context):
-            if lookup.get(att.id, -1) == att.invoices_number:
-                res[att.id] = True
-            else:
-                res[att.id] = False
+            registered = True if lookup.get(att.id, -1) == att.invoices_number \
+                else False
+            res[att.id] = {
+                'registered': registered,
+                'to_register': not registered,
+            }
         return res
 
     _columns = {
@@ -119,13 +128,20 @@ class FatturaPAAttachmentIn(orm.Model):
                                           help="Se indicato dal fornitore, Importo totale del documento al "
                  "netto dell'eventuale sconto e comprensivo di imposta a debito "
                  "del cessionario / committente"),
-        'registered': fields.function(_compute_registered,
-            string="Registered", type="boolean", fnct_search=_search_is_registered, store=False),
-        'invoices_date': fields.function(_compute_xml_data,
-                                         method=True,
-                                         string="Invoices date",
-                                         type="char",
-                                         store=True, ),
+        'registered': fields.function(
+            _compute_registered, multi='_compute_registered',
+            string="Registered", type="boolean",
+            fnct_search=_search_is_registered, store=False),
+        'to_register': fields.function(
+            _compute_registered, multi='_compute_registered',
+            string="To register", type="boolean",
+            fnct_search=_search_to_register, store=False),
+        'invoices_date': fields.function(
+            _compute_xml_data,
+            method=True,
+            string="Invoices date",
+            type="char",
+            store=True),
     }
 
     def get_xml_string(self, cr, uid, ids, context=None):

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import openerp.exceptions
 import lxml.etree as ET
 import os
 import shlex
@@ -156,6 +157,8 @@ class Attachment(orm.Model):
             xml_string = file_content
         elif fatturapa_attachment.datas_fname.lower().endswith('.xml'):
             xml_string = fatturapa_attachment.datas.decode('base64')
+        else:
+            raise openerp.exceptions.Warning(_('File extension not supported!'))
         xml_string = self.remove_xades_sign(xml_string)
         xml_string = self.strip_xml_content(xml_string)
         return xml_string
