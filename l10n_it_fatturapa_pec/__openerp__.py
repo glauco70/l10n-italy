@@ -57,7 +57,6 @@ mailbox.
         'views/fetchmail_view.xml',
         'views/mail_message_view.xml',
         'security/ir.model.access.csv',
-        'views/company_view.xml',
         'data/fetchmail_data.xml',
     ],
     'installable': True
