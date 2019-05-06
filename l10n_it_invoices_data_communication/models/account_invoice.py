@@ -142,7 +142,10 @@ class AccountInvoice(models.Model):
                 'Aliquota': aliquota,
                 'Natura_id': kind_id,
                 'EsigibilitaIVA': payability,
+                'Detraibile': 0.0,
             })
+            if fattura.type in ('in_invoice', 'in_refund'):
+                tax_grouped[main_tax.id]['Detraibile'] = 100.0
 
         for tax_id in tax_grouped:
             tax = tax_code_model.browse(tax_id)
