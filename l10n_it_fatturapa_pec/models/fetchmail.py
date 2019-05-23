@@ -18,8 +18,9 @@ MAX_POP_MESSAGES = 50
 class Fetchmail(orm.Model):
     _inherit = 'fetchmail.server'
 
-    def _default_e_inv_notify_partner_ids(self):
-        return [(6, 0, [self.env.user.partner_id.id])]
+    def _default_e_inv_notify_partner_ids(self, cr, uid, ids, context=None):
+        user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
+        return [(6, 0, [user.partner_id.id])]
 
     _columns = {
         'last_pec_error_message': fields.text(
@@ -108,7 +109,9 @@ class Fetchmail(orm.Model):
                             "General failure when trying to fetch mail from %s"
                             " server %s.",
                             server.type, server.name, exc_info=True)
-                        server.last_pec_error_message = str(e)
+                        server.write({
+                            'last_pec_error_message': str(e),
+                        })
                         error_raised = True
                     finally:
                         if imap_server:
@@ -170,7 +173,7 @@ class Fetchmail(orm.Model):
                     DEFAULT_SERVER_DATETIME_FORMAT)})
                 if error_raised:
                     server.pec_error_count += 1
-                    max_retry = self.env['ir.config_parameter'].get_param(
+                    max_retry = self.pool['ir.config_parameter'].get_param(
                         'fetchmail.pec.max.retry')
                     if server.pec_error_count > int(max_retry):
                         # Setting to draft prevents new e-invoices to
@@ -178,16 +181,21 @@ class Fetchmail(orm.Model):
                         # Resetting server state only after N fails.
                         # So that the system can try to fetch again after
                         # temporary connection errors
-                        server.state = 'draft'
-                        server.notify_about_server_reset()
+                        server.write({
+                            'state': 'draft',
+                        })
+                        server.notify_about_server_reset(cr, uid, ids, context)
                 else:
-                    server.pec_error_count = 0
-            server.write({'date': fields.Datetime.now()})
+                    server.write({
+                        'pec_error_count': 0
+                    })
+            server.write({'date': datetime.now().strftime(
+                    DEFAULT_SERVER_DATETIME_FORMAT)})
         return True
 
-    def notify_about_server_reset(self):
+    def notify_about_server_reset(self, cr, uid, ids, context):
         if self.e_inv_notify_partner_ids:
-            self.env['mail.mail'].create({
+            self.pool['mail.mail'].create(cr, uid, {
                 'subject': _(
                     "Fetchmail PEC server [%s] reset"
                 ) % self.name,
