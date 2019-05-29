@@ -22,6 +22,8 @@
 import base64
 from openerp.osv import fields, orm
 from openerp.tools.translate import _
+from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
+
 
 class FatturaPAAttachmentIn(orm.Model):
     _name = "fatturapa.attachment.in"
@@ -44,11 +46,17 @@ class FatturaPAAttachmentIn(orm.Model):
                 'invoices_total': 0,
                 }
             invoices_total = 0
+            invoices_date = []
             for invoice_body in fatt.FatturaElettronicaBody:
                 invoices_total += float(
                     invoice_body.DatiGenerali.DatiGeneraliDocumento.ImportoTotaleDocumento or 0
                 )
-            vals['invoices_total'] = invoices_total            
+                invoice_date = invoice_body.DatiGenerali.DatiGeneraliDocumento.Data.\
+                    strftime(DEFAULT_SERVER_DATE_FORMAT)
+                if invoice_date not in invoices_date:
+                    invoices_date.append(invoice_date)
+            vals['invoices_total'] = invoices_total
+            vals['invoices_date'] = ' '.join(invoices_date)
             ret[att.id] = vals.get(name, False)
         return ret
 
@@ -98,6 +106,11 @@ class FatturaPAAttachmentIn(orm.Model):
                  "del cessionario / committente"),
         'registered': fields.function(_compute_registered,
             string="Registered", type="boolean", fnct_search=_search_is_registered, store=False),
+        'invoices_date': fields.function(_compute_xml_data,
+                                         method=True,
+                                         string="Invoices date",
+                                         type="char",
+                                         store=True, ),
     }
 
     def get_xml_string(self, cr, uid, ids, context={}):

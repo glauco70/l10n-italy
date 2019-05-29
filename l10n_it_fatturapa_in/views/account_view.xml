@@ -20,6 +20,7 @@
 	                            <field name="invoices_number"/>
 	                            <field name="registered"/>
 	                            <field name="invoices_total"/>
+                                <field name="invoices_date"/>
 	                        </group>
 	                         
 	                    </group>
@@ -67,6 +68,7 @@
                     <field name="invoices_number"/>
 	                <field name="registered"/>
                     <field name="invoices_total"/>
+                    <field name="invoices_date"/>
 	                <field name="in_invoice_ids"/>
                 </tree>
             </field>
