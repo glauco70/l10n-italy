@@ -809,7 +809,7 @@ class WizardImportFatturapa(models.TransientModel):
         PaymentTermsModel = self.env['fatturapa.payment_term']
         SummaryDatasModel = self.env['faturapa.summary.data']
 
-        company = self.env.user.company_id
+        company = self.env.user.company_id.with_env(self.env)
         partner = partner_model.browse(partner_id)
         pay_acc_id = partner.property_account_payable.id
         # currency 2.1.1.2
@@ -957,9 +957,9 @@ class WizardImportFatturapa(models.TransientModel):
                             "Welfare Fund data %s has withholding tax but no "
                             "withholding tax was found in the system."
                             % walfareLine.TipoCassa))
-                if self.env.user.company_id.cassa_previdenziale_product_id:
+                if company.cassa_previdenziale_product_id:
                     cassa_previdenziale_product = (
-                        self.env.user.company_id.cassa_previdenziale_product_id
+                        company.cassa_previdenziale_product_id
                     )
                     line_vals['product_id'] = cassa_previdenziale_product.id
                     line_vals['name'] = cassa_previdenziale_product.name
@@ -1201,7 +1201,7 @@ class WizardImportFatturapa(models.TransientModel):
             # DatiGeneraliDocumento.ScontoMaggiorazione is not present,
             # because otherwise DatiRiepilogo and odoo invoice total would
             # differ
-            amount_untaxed = self.compute_xml_amount_untaxed(
+            amount_untaxed = invoice.compute_xml_amount_untaxed(
                 FatturaElettronicaBody.DatiBeniServizi.DatiRiepilogo)
             if not float_is_zero(
                 invoice.amount_untaxed-amount_untaxed, precision_digits=2
