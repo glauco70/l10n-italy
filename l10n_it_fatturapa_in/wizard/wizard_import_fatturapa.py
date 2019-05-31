@@ -1201,7 +1201,7 @@ class WizardImportFatturapa(models.TransientModel):
             # DatiGeneraliDocumento.ScontoMaggiorazione is not present,
             # because otherwise DatiRiepilogo and odoo invoice total would
             # differ
-            amount_untaxed = invoice.compute_xml_amount_untaxed(
+            amount_untaxed = self.compute_xml_amount_untaxed(
                 FatturaElettronicaBody.DatiBeniServizi.DatiRiepilogo)
             if not float_is_zero(
                 invoice.amount_untaxed-amount_untaxed, precision_digits=2
