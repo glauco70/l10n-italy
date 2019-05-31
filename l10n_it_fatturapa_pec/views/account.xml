@@ -7,7 +7,9 @@
             <field name="inherit_id" ref="account.invoice_tree"></field>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='state']" position="before">
-                    <field name="fatturapa_state"/>
+                    <field name="type" invisible="1"/>
+                    <field name="fatturapa_state" invisible="context.get('type',False) == 'in_invoice'"/>
+                    <field name="has_fatturapa_attachment_in_id" invisible="context.get('type',False) == 'out_invoice'"/>
                 </xpath>
             </field>
         </record>

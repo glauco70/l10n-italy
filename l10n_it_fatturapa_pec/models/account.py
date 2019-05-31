@@ -34,6 +34,14 @@ class account_invoice(osv.osv):
                 res[invoice.id] = True
         return res.keys()
 
+    def _get_has_fatturapa_attachment_in_id(
+            self, cr, uid, ids, name, args, context=None):
+        res = {}
+        for record in self.browse(cr, uid, ids, context=context):
+            res[record.id] = True if record.fatturapa_attachment_in_id \
+                else False
+        return res
+
     _columns = {
         'fatturapa_state': fields.function(
             _get_fatturapa_state, type='selection', string='E-invoice State',
@@ -48,6 +56,10 @@ class account_invoice(osv.osv):
                 'fatturapa.attachment.out':
                     (_get_account_invoice_ids_by_fatturapa_attachment_out_ids,
                      ['state'], 10),
-            })
+            }),
+        'has_fatturapa_attachment_in_id': fields.function(
+            _get_has_fatturapa_attachment_in_id, type='boolean',
+            string='Has e-invoice',
+        )
     }
 
