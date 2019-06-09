@@ -7,11 +7,12 @@
     'name': 'Italian Localization - Comunicazione dati fatture',
     'summary': 'Comunicazione dati fatture (c.d. "nuovo spesometro" o '
                '"esterometro")',
-    'version': '8.0.1.1.0',
+    'version': '8.0.1.0.0',
     'category': 'Account',
     'author': "Openforce di Camilli Alessandro, "
               "Odoo Community Association (OCA)",
-    'website': 'https://github.com/OCA/l10n-italy/',
+    'website': 'https://github.com/OCA/l10n-italy/tree/'
+               '8.0/l10n_it_invoices_data_communication',
     'license': 'LGPL-3',
     'depends': [
         'account', 'l10n_it_fiscal_document_type', 'l10n_it_codici_carica',
