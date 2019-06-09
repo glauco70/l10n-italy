@@ -821,7 +821,8 @@ class ComunicazioneDatiIva(models.Model):
         for invoices_partner in comunicazione.fatture_emesse_ids:
             # -----     Normalizzazione delle stringhe
             if not check_normalized_string(
-                    invoices_partner.cessionario_Denominazione):
+                invoices_partner.cessionario_Denominazione
+            ):
                 errors.append(_(
                     u'Remove empty characters around denomination of assignee '
                     u'%s'
@@ -832,13 +833,15 @@ class ComunicazioneDatiIva(models.Model):
                     u'%s'
                 ) % invoices_partner.partner_id.display_name)
             if not check_normalized_string(
-                    invoices_partner.cessionario_Cognome):
+                invoices_partner.cessionario_Cognome
+            ):
                 errors.append(_(
                     u'Remove empty characters around surname of assignee '
                     u'%s'
                 ) % invoices_partner.partner_id.display_name)
             if not check_normalized_string(
-                    invoices_partner.cessionario_sede_Indirizzo):
+                invoices_partner.cessionario_sede_Indirizzo
+            ):
                 errors.append(_(
                     u'Remove empty characters around headquarters address of '
                     u'assignee %s'
@@ -851,13 +854,15 @@ class ComunicazioneDatiIva(models.Model):
                     u' %s'
                 ) % invoices_partner.partner_id.display_name)
             if not check_normalized_string(
-                    invoices_partner.cessionario_sede_Comune):
+                invoices_partner.cessionario_sede_Comune
+            ):
                 errors.append(_(
                     u'Remove empty characters around city of assignee '
                     u'%s'
                 ) % invoices_partner.partner_id.display_name)
             if not check_normalized_string(
-                    invoices_partner.cessionario_so_Indirizzo):
+                invoices_partner.cessionario_so_Indirizzo
+            ):
                 errors.append(_(
                     u'Remove empty characters around address of permanent '
                     u'establishment %s'
@@ -870,7 +875,8 @@ class ComunicazioneDatiIva(models.Model):
                     u'permanent establishment %s'
                 ) % invoices_partner.partner_id.display_name)
             if not check_normalized_string(
-                    invoices_partner.cessionario_so_Comune):
+                invoices_partner.cessionario_so_Comune
+            ):
                 errors.append(_(
                     u'Remove empty characters around city of permanent '
                     u'establishment %s'
@@ -882,13 +888,15 @@ class ComunicazioneDatiIva(models.Model):
                     u'representative %s'
                 ) % invoices_partner.partner_id.display_name)
             if not check_normalized_string(
-                    invoices_partner.cessionario_rf_Nome):
+                invoices_partner.cessionario_rf_Nome
+            ):
                 errors.append(_(
                     u'Remove empty characters around name of fiscal '
                     u'representative %s'
                 ) % invoices_partner.partner_id.display_name)
             if not check_normalized_string(
-                    invoices_partner.cessionario_rf_Cognome):
+                invoices_partner.cessionario_rf_Cognome
+            ):
                 errors.append(_(
                     u'Remove empty characters around surname of fiscal '
                     u'representative %s'
@@ -932,7 +940,7 @@ class ComunicazioneDatiIva(models.Model):
                     ]) and not all([
                         invoices_partner.cessionario_rf_IdFiscaleIVA_IdPaese,
                         invoices_partner.cessionario_rf_IdFiscaleIVA_IdCodice,
-            ]):
+                    ]):
                 errors.append(_(
                     u'Country ID and fiscal identifier of fiscal '
                     u'representative %s are mandatory, when at least one '
@@ -940,8 +948,8 @@ class ComunicazioneDatiIva(models.Model):
                 ) % invoices_partner.partner_id.display_name)
             # ----- CAP
             if invoices_partner.cessionario_sede_Cap and \
-                    not re.match('[0-9]{5}',
-                                 invoices_partner.cessionario_sede_Cap):
+                    not re.match(
+                        '[0-9]{5}', invoices_partner.cessionario_sede_Cap):
                 errors.append(_(
                     u'ZIP %s of assignee %s is not 5 numeric characters'
                 ) % (
@@ -952,8 +960,7 @@ class ComunicazioneDatiIva(models.Model):
             for invoice in invoices_partner.fatture_emesse_body_ids:
                 if not invoice.dati_fattura_iva_ids:
                     errors.append(_(
-                        u'No VAT data defined for invoice %s of '
-                        u'invoices_partner %s'
+                        u'No VAT data defined for invoice %s of partner %s'
                     ) % (
                         invoice.invoice_id.number,
                         invoices_partner.partner_id.display_name))
