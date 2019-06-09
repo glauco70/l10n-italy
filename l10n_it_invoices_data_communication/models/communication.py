@@ -475,6 +475,7 @@ class ComunicazioneDatiIva(models.Model):
             self.fatture_emesse_ids = dati_fatture
 
     def _get_fatture_emesse_domain(self):
+        self.ensure_one()
         domain = [('comunicazione_dati_iva_escludi', '=', True)]
         no_journal_ids = self.env['account.journal'].search(domain).ids
         domain = [('type', 'in', ['out_invoice', 'out_refund']),
@@ -482,8 +483,13 @@ class ComunicazioneDatiIva(models.Model):
                   ('move_id', '!=', False),
                   ('move_id.journal_id', 'not in', no_journal_ids),
                   ('company_id', '=', self.company_id.id),
+                  '|',
+                  '&',
                   ('registration_date', '>=', self.date_start),
                   ('registration_date', '<=', self.date_end),
+                  '&',
+                  ('date_invoice', '>=', self.date_start),
+                  ('date_invoice', '<=', self.date_end),
                   '|',
                   ('fiscal_document_type_id.out_invoice', '=', True),
                   ('fiscal_document_type_id.out_refund', '=', True),
@@ -545,6 +551,7 @@ class ComunicazioneDatiIva(models.Model):
             self.fatture_ricevute_ids = dati_fatture
 
     def _get_fatture_ricevute_domain(self):
+        self.ensure_one()
         domain = [('comunicazione_dati_iva_escludi', '=', True)]
         no_journal_ids = self.env['account.journal'].search(domain).ids
         domain = [('type', 'in', ['in_invoice', 'in_refund']),
@@ -552,8 +559,13 @@ class ComunicazioneDatiIva(models.Model):
                   ('move_id', '!=', False),
                   ('move_id.journal_id', 'not in', no_journal_ids),
                   ('company_id', '=', self.company_id.id),
+                  '|',
+                  '&',
                   ('registration_date', '>=', self.date_start),
                   ('registration_date', '<=', self.date_end),
+                  '&',
+                  ('date_invoice', '>=', self.date_start),
+                  ('date_invoice', '<=', self.date_end),
                   '|',
                   ('fiscal_document_type_id.in_invoice', '=', True),
                   ('fiscal_document_type_id.in_refund', '=', True), ]
