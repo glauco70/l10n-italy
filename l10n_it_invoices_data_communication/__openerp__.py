@@ -15,9 +15,14 @@
                '8.0/l10n_it_invoices_data_communication',
     'license': 'LGPL-3',
     'depends': [
-        'account', 'l10n_it_fiscal_document_type', 'l10n_it_codici_carica',
-        'l10n_it_fiscalcode', 'l10n_it_esigibilita_iva',
-        'l10n_it_account_tax_kind', 'report_intrastat'
+        'account',
+        'account_invoice_entry_date',
+        'l10n_it_account_tax_kind',
+        'l10n_it_codici_carica',
+        'l10n_it_esigibilita_iva',
+        'l10n_it_fiscal_document_type',
+        'l10n_it_fiscalcode',
+        'report_intrastat',
     ],
     'data': [
         'security/ir.model.access.csv',
