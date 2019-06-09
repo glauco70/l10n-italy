@@ -1034,129 +1034,148 @@ class ComunicazioneDatiIva(models.Model):
                 _('Remove empty characters around surname of fiscal '
                   'representative'))
         # ----- Cedente
-        for partner in comunicazione.fatture_ricevute_ids:
+        for invoices_partner in comunicazione.fatture_ricevute_ids:
             # -----     Normalizzazione delle stringhe
-            if not check_normalized_string(partner.cedente_Denominazione):
+            if not check_normalized_string(
+                invoices_partner.cedente_Denominazione
+            ):
                 errors.append(_(
                     u'Remove empty characters around denomination of seller '
                     u'%s'
-                ) % partner.partner_id.display_name)
-            if not check_normalized_string(partner.cedente_Nome):
+                ) % invoices_partner.partner_id.display_name)
+            if not check_normalized_string(invoices_partner.cedente_Nome):
                 errors.append(_(
                     u'Remove empty characters around name of seller '
                     u'%s'
-                ) % partner.partner_id.display_name)
-            if not check_normalized_string(partner.cedente_Cognome):
+                ) % invoices_partner.partner_id.display_name)
+            if not check_normalized_string(invoices_partner.cedente_Cognome):
                 errors.append(_(
                     u'Remove empty characters around surname of seller '
                     u'%s'
-                ) % partner.partner_id.display_name)
-            if not check_normalized_string(partner.cedente_sede_Indirizzo):
+                ) % invoices_partner.partner_id.display_name)
+            if not check_normalized_string(
+                invoices_partner.cedente_sede_Indirizzo
+            ):
                 errors.append(_(
                     u'Remove empty characters around headquarters address of '
                     u'seller %s'
-                ) % partner.partner_id.display_name)
-            if not check_normalized_string(partner.cedente_sede_NumeroCivico):
+                ) % invoices_partner.partner_id.display_name)
+            if not check_normalized_string(
+                invoices_partner.cedente_sede_NumeroCivico
+            ):
                 errors.append(_(
                     u'Remove empty characters around street number of seller '
                     u'%s'
-                ) % partner.partner_id.display_name)
-            if not check_normalized_string(partner.cedente_sede_Comune):
+                ) % invoices_partner.partner_id.display_name)
+            if not check_normalized_string(
+                invoices_partner.cedente_sede_Comune
+            ):
                 errors.append(_(
                     u'Remove empty characters around city of seller '
                     u'%s'
-                ) % partner.partner_id.display_name)
-            if not check_normalized_string(partner.cedente_so_Indirizzo):
+                ) % invoices_partner.partner_id.display_name)
+            if not check_normalized_string(
+                invoices_partner.cedente_so_Indirizzo
+            ):
                 errors.append(_(
                     u'Remove empty characters around address of permanent '
                     u'establishment %s'
-                ) % partner.partner_id.display_name)
-            if not check_normalized_string(partner.cedente_so_NumeroCivico):
+                ) % invoices_partner.partner_id.display_name)
+            if not check_normalized_string(
+                invoices_partner.cedente_so_NumeroCivico
+            ):
                 errors.append(_(
                     u'Remove empty characters around street number of '
                     u'permanent establishment %s'
-                ) % partner.partner_id.display_name)
-            if not check_normalized_string(partner.cedente_so_Comune):
+                ) % invoices_partner.partner_id.display_name)
+            if not check_normalized_string(
+                invoices_partner.cedente_so_Comune
+            ):
                 errors.append(_(
                     u'Remove empty characters around city of permanent '
                     u'establishment %s'
-                ) % partner.partner_id.display_name)
+                ) % invoices_partner.partner_id.display_name)
             if not check_normalized_string(
-                    partner.cedente_rf_Denominazione):
+                    invoices_partner.cedente_rf_Denominazione):
                 errors.append(_(
                     u'Remove empty characters around denomination of fiscal '
                     u'representative %s'
-                ) % partner.partner_id.display_name)
-            if not check_normalized_string(partner.cedente_rf_Nome):
+                ) % invoices_partner.partner_id.display_name)
+            if not check_normalized_string(invoices_partner.cedente_rf_Nome):
                 errors.append(_(
                     u'Remove empty characters around name of fiscal '
                     u'representative %s'
-                ) % partner.partner_id.display_name)
-            if not check_normalized_string(partner.cedente_rf_Cognome):
+                ) % invoices_partner.partner_id.display_name)
+            if not check_normalized_string(
+                invoices_partner.cedente_rf_Cognome
+            ):
                 errors.append(_(
                     u'Remove empty characters around surname of fiscal '
                     u'representative %s'
-                ) % partner.partner_id.display_name)
+                ) % invoices_partner.partner_id.display_name)
             # ----- Dati fiscali
-            if not partner.cedente_IdFiscaleIVA_IdPaese and \
-                    partner.cedente_IdFiscaleIVA_IdCodice:
+            if not invoices_partner.cedente_IdFiscaleIVA_IdPaese and \
+                    invoices_partner.cedente_IdFiscaleIVA_IdCodice:
                 errors.append(_(
                     u'Define a country ID for seller %s'
-                ) % partner.partner_id.display_name)
+                ) % invoices_partner.partner_id.display_name)
             # ----- Dati Sede
-            if not all([partner.cedente_sede_Indirizzo,
-                        partner.cedente_sede_Comune,
-                        partner.cedente_sede_Nazione, ]):
+            if not all([invoices_partner.cedente_sede_Indirizzo,
+                        invoices_partner.cedente_sede_Comune,
+                        invoices_partner.cedente_sede_Nazione, ]):
                 errors.append(_(
                     u'Address, city, country of %s are mandatory'
-                ) % partner.partner_id.display_name)
+                ) % invoices_partner.partner_id.display_name)
             # ----- Dati Stabile Organizzazione
-            if any([partner.cedente_so_Indirizzo,
-                    partner.cedente_so_NumeroCivico,
-                    partner.cedente_so_Cap,
-                    partner.cedente_so_Comune,
-                    partner.cedente_so_Provincia,
-                    partner.cedente_so_Nazione,
-                    ]) and not all([partner.cedente_so_Indirizzo,
-                                    partner.cedente_so_Comune,
-                                    partner.cedente_so_Cap,
-                                    partner.cedente_so_Nazione, ]):
+            if any([invoices_partner.cedente_so_Indirizzo,
+                    invoices_partner.cedente_so_NumeroCivico,
+                    invoices_partner.cedente_so_Cap,
+                    invoices_partner.cedente_so_Comune,
+                    invoices_partner.cedente_so_Provincia,
+                    invoices_partner.cedente_so_Nazione,
+                    ]) and not all([invoices_partner.cedente_so_Indirizzo,
+                                    invoices_partner.cedente_so_Comune,
+                                    invoices_partner.cedente_so_Cap,
+                                    invoices_partner.cedente_so_Nazione, ]):
                 errors.append(_(
                     u'Address, city, ZIP and country of permanent '
                     u'establishment %s are mandatory, when at least one value '
                     u'is defined'
-                ) % partner.partner_id.display_name)
+                ) % invoices_partner.partner_id.display_name)
             # ----- Rappresentante Fiscale
-            if any([partner.cedente_rf_IdFiscaleIVA_IdPaese,
-                    partner.cedente_rf_IdFiscaleIVA_IdCodice,
-                    partner.cedente_rf_Denominazione,
-                    partner.cedente_rf_Nome,
-                    partner.cedente_rf_Cognome,
+            if any([invoices_partner.cedente_rf_IdFiscaleIVA_IdPaese,
+                    invoices_partner.cedente_rf_IdFiscaleIVA_IdCodice,
+                    invoices_partner.cedente_rf_Denominazione,
+                    invoices_partner.cedente_rf_Nome,
+                    invoices_partner.cedente_rf_Cognome,
                     ]) and not all([
-                        partner.cedente_rf_IdFiscaleIVA_IdPaese,
-                        partner.cedente_rf_IdFiscaleIVA_IdCodice, ]):
+                        invoices_partner.cedente_rf_IdFiscaleIVA_IdPaese,
+                        invoices_partner.cedente_rf_IdFiscaleIVA_IdCodice, ]):
                 errors.append(_(
                     u'Country ID and fiscal identifier of fiscal '
                     u'representative %s are mandatory, when at least one '
                     u'value is defined'
-                ) % partner.partner_id.display_name)
+                ) % invoices_partner.partner_id.display_name)
             # ----- CAP
-            if partner.cedente_sede_Cap and \
-                    not re.match('[0-9]{5}', partner.cedente_sede_Cap):
+            if invoices_partner.cedente_sede_Cap and \
+                    not re.match(
+                        '[0-9]{5}', invoices_partner.cedente_sede_Cap
+            ):
                 errors.append(_(
                     u'ZIP %s of seller %s is not 5 characters'
                 ) % (
-                    partner.cessionario_sede_Cap,
-                    partner.partner_id.display_name
+                    invoices_partner.cessionario_sede_Cap,
+                    invoices_partner.partner_id.display_name
                 ))
             # ----- Dettagli IVA
-            for invoice in partner.fatture_ricevute_body_ids:
+            for invoice in invoices_partner.fatture_ricevute_body_ids:
                 if not invoice.dati_fattura_iva_ids:
                     errors.append(_(
-                        u'No VAT data defined for invoice %s of partner %s'
+                        u'No VAT data defined for invoice %s of '
+                        u'invoices_partner %s'
                     ) % (
                         invoice.invoice_id.number,
-                        partner.partner_id.display_name))
+                        invoices_partner.partner_id.display_name))
                 if not invoice.dati_fattura_Numero:
                     errors.append(
                         _(u'No invoice number for supplier bill %s') % (
