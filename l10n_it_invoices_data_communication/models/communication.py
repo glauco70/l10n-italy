@@ -500,8 +500,8 @@ class ComunicazioneDatiIva(models.Model):
         posizione = 0
         for cedente in cedenti:
             # Fatture
-            fatture = [x for x in fatture_ricevute if x.partner_id.id ==
-                       cedente.id]
+            fatture = fatture_ricevute.filtered(
+                lambda fr: fr.partner_id.id == cedente.id)
             vals_fatture = []
             for fattura in fatture:
                 posizione += 1
@@ -712,6 +712,7 @@ class ComunicazioneDatiIva(models.Model):
         return res
 
     def check_1k_limit(self):
+        self.ensure_one()
         if (
             self.check_fatture_emesse_body() and
             self.check_fatture_emesse_partners() and
