@@ -430,8 +430,8 @@ class ComunicazioneDatiIva(models.Model):
         dati_fatture = []
         posizione = 0
         for cessionario in cessionari:
-            fatture = [x for x in fatture_emesse if x.partner_id.id ==
-                       cessionario.id]
+            fatture = fatture_emesse.filtered(
+                lambda fe: fe.partner_id.id == cessionario.id)
             vals_fatture = []
             for fattura in fatture:
                 posizione += 1
