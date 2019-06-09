@@ -673,9 +673,7 @@ class ComunicazioneDatiIva(models.Model):
                 old_set = fatture_ricevute
                 for cedente in cedenti:
                     fatture = fatture_ricevute.filtered(
-                        lambda fr:
-                        fatture_ricevute.partner_id.id ==
-                            cedente.id)
+                        lambda fr: fr.partner_id.id == cedente.id)
                     if len(fatture) > 1000:
                         new_set_ids = fatture.ids[:len(fatture)/2]
                         new_partial_set = self.env['account.invoice'].browse(
