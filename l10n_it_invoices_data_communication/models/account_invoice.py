@@ -150,6 +150,7 @@ class AccountInvoice(models.Model):
         return tax_lines
 
     def _check_tax_comunicazione_dati_iva(self, tax, val=None):
+        self.ensure_one()
         if not val:
             val = {}
         if val['Aliquota'] == 0 and not val['Natura_id']:
