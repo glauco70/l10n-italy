@@ -8,23 +8,27 @@
                 <form string="Split communication">
                     <div>
                         <p>
-                        If the communication contains more than 1000 partners or more than 1000 invoices per partner, it will be (recursively) splitted in smaller communications.
+                            If the communication contains more than 1000
+                            partners or more than 1000 invoices per partner, it
+                            will be (recursively) splitted in smaller
+                            communications.
                         </p>
                     </div>
                     <footer>
                         <button name="split"
                                 string="Split"
                                 type="object"
-                                class="oe_highlight"  />
+                                class="oe_highlight"/>
                         or
-                        <button string="Cancel" class="oe_link" special="cancel" />
+                        <button string="Cancel" class="oe_link"
+                                special="cancel"/>
                     </footer>
                 </form>
             </field>
         </record>
 
-
-        <record id="action_wizard_split_big_communication" model="ir.actions.act_window">
+        <record id="action_wizard_split_big_communication"
+                model="ir.actions.act_window">
             <field name="name">Split big communication</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">wizard.split.big.invoices.communication</field>
