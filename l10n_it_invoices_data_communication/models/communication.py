@@ -1088,9 +1088,7 @@ class ComunicazioneDatiIva(models.Model):
                     u'Remove empty characters around street number of '
                     u'permanent establishment %s'
                 ) % invoices_partner.partner_id.display_name)
-            if not check_normalized_string(
-                invoices_partner.cedente_so_Comune
-            ):
+            if not check_normalized_string(invoices_partner.cedente_so_Comune):
                 errors.append(_(
                     u'Remove empty characters around city of permanent '
                     u'establishment %s'
@@ -1159,20 +1157,18 @@ class ComunicazioneDatiIva(models.Model):
             # ----- CAP
             if invoices_partner.cedente_sede_Cap and \
                     not re.match(
-                        '[0-9]{5}', invoices_partner.cedente_sede_Cap
-            ):
+                        '[0-9]{5}', invoices_partner.cedente_sede_Cap):
                 errors.append(_(
                     u'ZIP %s of seller %s is not 5 characters'
                 ) % (
-                    invoices_partner.cessionario_sede_Cap,
+                    invoices_partner.cedente_sede_Cap,
                     invoices_partner.partner_id.display_name
                 ))
             # ----- Dettagli IVA
             for invoice in invoices_partner.fatture_ricevute_body_ids:
                 if not invoice.dati_fattura_iva_ids:
                     errors.append(_(
-                        u'No VAT data defined for invoice %s of '
-                        u'invoices_partner %s'
+                        u'No VAT data defined for invoice %s of partner %s'
                     ) % (
                         invoice.invoice_id.number,
                         invoices_partner.partner_id.display_name))
@@ -2501,7 +2497,8 @@ class ComunicazioneDatiIvaFattureRicevuteBody(models.Model):
                 fattura.dati_fattura_TipoDocumento = \
                     fattura.invoice_id.fiscal_document_type_id and \
                     fattura.invoice_id.fiscal_document_type_id.id or False
-                fattura.dati_fattura_Numero = fattura.invoice_id.number
+                fattura.dati_fattura_Numero = \
+                    fattura.invoice_id.supplier_invoice_number
                 fattura.dati_fattura_Data = fattura.invoice_id.date_invoice
                 fattura.dati_fattura_DataRegistrazione = \
                     fattura.invoice_id.registration_date
