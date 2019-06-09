@@ -2,7 +2,7 @@
 
 
 from openerp import fields, models, _
-from openerp.exceptions import ValidationError
+from openerp.exceptions import ValidationError, Warning as UserError
 
 
 class AccountInvoice(models.Model):
