@@ -27,6 +27,6 @@ class ComunicazioneDatiIvaRicalcoloTipoDocumentoFiscale(models.TransientModel):
                     fattura.fiscal_document_type_id =\
                         fattura._get_document_fiscal_type(
                             type=fattura.type, partner=fattura.partner_id,
-                            fiscal_position=fattura.fiscal_position_id,
+                            fiscal_position=fattura.fiscal_position,
                             journal=fattura.journal_id)[0] or False
             return {}
