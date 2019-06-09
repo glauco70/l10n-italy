@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
+
 from openerp import fields, models, _
-from openerp.exceptions import ValidationError
+from openerp.exceptions import ValidationError, Warning as UserError
 
 
 class AccountInvoice(models.Model):
@@ -11,10 +12,16 @@ class AccountInvoice(models.Model):
         string='Exclude from invoices communication')
 
     def _compute_taxes_in_company_currency(self, vals):
+        sign = 1 if self.type in ('out_invoice', 'in_refund') else -1
+        amount_total_signed = sign * self.amount_total
+        currency_id = self.currency_id.with_context(date=self.date_invoice)
+        amount_total_company = currency_id.compute(
+            self.amount_total, self.company_id.currency_id)
+        amount_total_company_signed = sign * amount_total_company
         try:
-            exchange_rate = abs(
-                self.amount_total /
-                self.move_id.amount)
+            exchange_rate = (
+                amount_total_signed /
+                amount_total_company_signed)
         except ZeroDivisionError:
             exchange_rate = 1
         vals['ImponibileImporto'] = vals['ImponibileImporto'] / exchange_rate
@@ -150,6 +157,7 @@ class AccountInvoice(models.Model):
         return tax_lines
 
     def _check_tax_comunicazione_dati_iva(self, tax, val=None):
+        self.ensure_one()
         if not val:
             val = {}
         if val['Aliquota'] == 0 and not val['Natura_id']:

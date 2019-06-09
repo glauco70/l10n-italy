@@ -23,7 +23,8 @@
                 <form string="Invoices data communication">
                     <header>
                         <button name="compute_values" string="Compute values" type="object" class="oe_highlight"
-                                attrs="{'invisible':[('dati_trasmissione', '=', 'ANN')]}"/>
+                                attrs="{'invisible':[('dati_trasmissione', '=', 'ANN')]}"
+                                confirm="This will load invoices data, according to the selected time interval. Proceed?"/>
                         <button type="action" name="%(action_compute_fiscal_document_type)d"
                                 string="Assign fiscal document type"
                                 attrs="{'invisible':[('dati_trasmissione', '=', 'ANN')]}"/>
