@@ -608,9 +608,7 @@ class ComunicazioneDatiIva(models.Model):
                 old_set = fatture_emesse
                 for cessionario in cessionari:
                     fatture = fatture_emesse.filtered(
-                        lambda fe:
-                        fatture_emesse.partner_id.id ==
-                            cessionario.id)
+                        lambda fe: fe.partner_id.id == cessionario.id)
                     if len(fatture) > 1000:
                         new_set_ids = fatture.ids[:len(fatture)/2]
                         new_partial_set = self.env['account.invoice'].browse(
