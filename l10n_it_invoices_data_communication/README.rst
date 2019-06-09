@@ -23,8 +23,7 @@ Italian Localization - Comunicazione dati fatture
     :target: https://runbot.odoo-community.org/runbot/122/8.0
     :alt: Try me on Runbot
 
-|badge1| |badge2| |badge3| |badge4| |badge5|
-
+|badge1| |badge2| |badge3| |badge4| |badge5| 
 **Italiano**
 
 Gestione Comunicazione dati fatture ed export file XML conforme alle specifiche dell'Agenzia delle Entrate.
