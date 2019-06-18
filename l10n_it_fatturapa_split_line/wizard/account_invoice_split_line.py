@@ -26,7 +26,7 @@ class SplitInvoiceLines(models.TransientModel):
                         a += 1
                         if a == 1:
                             continue
-                        res = line.copy(
+                        line.copy(
                             default={
                                 'name': _('(...follow) %s') % inv_line985,
                                 'sequence': line.sequence + a,
