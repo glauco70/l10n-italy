@@ -11,7 +11,6 @@ class SplitInvoiceLines(models.TransientModel):
     @api.multi
     def split_invoice_line(self):
         if self.env.context.get('active_ids'):
-            invoice_line_obj = self.env['account.invoice.line']
             invoices = self.env['account.invoice'].browse(
                 self.env.context.get('active_ids')
             )
@@ -22,9 +21,11 @@ class SplitInvoiceLines(models.TransientModel):
                     a = 0
                     line_list_985 = \
                         [line.name[i:i + 985] for i in
-                         range(1, len(line.name), 985)]
+                         range(0, len(line.name), 985)]
                     for inv_line985 in line_list_985:
                         a += 1
+                        if a == 1:
+                            continue
                         res = line.copy(
                             default={
                                 'name': _('(...follow) %s') % inv_line985,
