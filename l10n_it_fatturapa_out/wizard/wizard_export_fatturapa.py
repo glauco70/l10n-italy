@@ -616,17 +616,17 @@ class WizardExportFatturapa(models.TransientModel):
 
         generic_mngt_line = False
         generic_mngt_lines = invoice.related_mngt_data_ids.filtered(
-            lambda x: not x.lineRef or not x.invoice_line_id and x.invoice_id)
+            lambda x: not x.lineRef)
         if generic_mngt_lines:
             generic_mngt_line = generic_mngt_lines[0]
         for DettaglioLinea in body.DatiBeniServizi.DettaglioLinee:
-            dati_gestionali = AltriDatiGestionaliType()
             # get related mgnt_line if exists
             mngt_lines = filter(
                 lambda x: x.lineRef == DettaglioLinea.NumeroLinea,
                 invoice.related_mngt_data_ids)
             if mngt_lines:
                 for mngt_line in mngt_lines:
+                    dati_gestionali = AltriDatiGestionaliType()
                     if mngt_line.name:
                         dati_gestionali.TipoDato = mngt_line.name
                     if mngt_line.text_ref:
@@ -641,6 +641,7 @@ class WizardExportFatturapa(models.TransientModel):
                     )
             else:
                 if generic_mngt_line:
+                    dati_gestionali = AltriDatiGestionaliType()
                     # if fatturapa line is not referred, and exist a
                     # generic_mngt_line, add this generic mngt data to line
                     if generic_mngt_line.name:
