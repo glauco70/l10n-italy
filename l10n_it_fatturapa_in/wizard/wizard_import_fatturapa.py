@@ -185,6 +185,7 @@ class WizardImportFatturapa(models.TransientModel):
         partner_id = self.getPartnerBase(cedPrest.DatiAnagrafici)
         fiscalPosModel = self.env['fatturapa.fiscal_position']
         if partner_id:
+            partner_company_id = partner_model.browse(partner_id).company_id.id
             vals = {
                 'street': cedPrest.Sede.Indirizzo,
                 'zip': cedPrest.Sede.CAP,
@@ -234,6 +235,7 @@ class WizardImportFatturapa(models.TransientModel):
                 REA = cedPrest.IscrizioneREA
                 rea_partners = partner_model.search([
                     ('rea_code', '=', REA.NumeroREA),
+                    ('company_id', '=', partner_company_id),
                     ('id', '!=', partner_id)
                 ])
                 if rea_partners:

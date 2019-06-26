@@ -723,7 +723,6 @@ class WizardExportFatturapa(models.TransientModel):
                 DettaglioLinea.CodiceArticolo.append(CodiceArticolo)
 
         body.DatiBeniServizi.DettaglioLinee.append(DettaglioLinea)
-
         return True
 
     def setDatiRiepilogo(self, invoice, body):
@@ -958,7 +957,6 @@ class WizardExportFatturapa(models.TransientModel):
                 'type': 'binary'
             }
             attachment = attachment_model.create(data_attach)
-
         inv.write({
             'fatturapa_doc_attachments': [(0, 0, {
                 'is_pdf_invoice_print': True,
