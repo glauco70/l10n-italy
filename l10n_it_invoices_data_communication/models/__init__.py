@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-from . import communication, account_invoice, account
+from . import account_tax_code, communication, account_invoice, account
