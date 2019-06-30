@@ -221,6 +221,8 @@ class WizardImportFatturapa(orm.TransientModel):
                 vals['lastname'] = DatiAnagrafici.Anagrafica.Cognome
             if DatiAnagrafici.Anagrafica.Denominazione:
                 vals['name'] = DatiAnagrafici.Anagrafica.Denominazione
+            if not vals.get('name'):
+                vals['name'] = '*** Nome non disponibile su file XML ***'
 
             return partner_model.create(cr, uid, vals, context=context)
 
